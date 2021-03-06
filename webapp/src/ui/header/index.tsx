@@ -9,9 +9,7 @@ export const Header: React.FC = () => {
   return (
     <nav className="navbar navbar-dark bg-dark navbar-expand-lg">
       <div className="container-fluid">
-        <a className="navbar-brand" href="#">
-          {t("title")}
-        </a>
+        <span className="navbar-brand">{t("title")}</span>
         <button
           className="navbar-toggler"
           type="button"

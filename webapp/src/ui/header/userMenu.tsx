@@ -11,28 +11,25 @@ export const UserMenu: React.FC = () => {
 
   return (
     <li className="nav-item dropdown">
-      <a
-        className="nav-link dropdown-toggle"
-        href="#"
+      <button
+        className="nav-link btn btn-link dropdown-toggle"
         id="navbarDropdown"
-        role="button"
         data-bs-toggle="dropdown"
         aria-expanded="false"
       >
         {user?.name}
-      </a>
+      </button>
       <ul
         className="dropdown-menu dropdown-menu-lg-end dropdown-menu-dark"
         aria-labelledby="navbarDropdown"
       >
         <li>
-          <a
-            className="dropdown-item"
-            href="#"
+          <button
+            className="dropdown-item btn btn-link"
             onClick={() => logout({ returnTo: window.location.origin })}
           >
             {t("header.logout")}
-          </a>
+          </button>
         </li>
       </ul>
     </li>

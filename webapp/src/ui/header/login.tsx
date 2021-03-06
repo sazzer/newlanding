@@ -11,9 +11,12 @@ export const Login: React.FC = () => {
 
   return (
     <li className="nav-item">
-      <a className="nav-link" href="#" onClick={() => loginWithRedirect()}>
+      <button
+        className="nav-link btn btn-link"
+        onClick={() => loginWithRedirect()}
+      >
         {t("header.login")}
-      </a>
+      </button>
     </li>
   );
 };
