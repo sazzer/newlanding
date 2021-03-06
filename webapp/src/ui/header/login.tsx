@@ -13,7 +13,7 @@ export const Login: React.FC = () => {
     <li className="nav-item">
       <button
         className="nav-link btn btn-link"
-        onClick={() => loginWithRedirect()}
+        onClick={() => loginWithRedirect({ prompt: "login" })}
       >
         {t("header.login")}
       </button>

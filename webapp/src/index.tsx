@@ -13,6 +13,8 @@ ReactDOM.render(
       domain={env("AUTH0_DOMAIN")}
       clientId={env("AUTH0_CLIENTID")}
       redirectUri={window.location.origin}
+      audience={env("AUTH0_AUDIENCE")}
+      useRefreshTokens={true}
     >
       <BrowserRouter>
         <App />
