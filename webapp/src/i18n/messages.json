@@ -1,3 +1,6 @@
 {
-  "hello": "Hello, World"
+  "title": "New Landing",
+  "header": {
+    "toggleNavigation": "Toggle Navigation"
+  }
 }
