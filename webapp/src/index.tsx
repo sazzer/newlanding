@@ -1,3 +1,5 @@
+import "./i18n";
+
 import { App } from "./ui";
 import { BrowserRouter } from "react-router-dom";
 import React from "react";
