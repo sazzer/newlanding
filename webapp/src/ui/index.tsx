@@ -7,7 +7,9 @@ export const App: React.FC = () => {
   return (
     <div>
       <Header />
-      <LandingPage />
+      <div className="container-fluid">
+        <LandingPage />
+      </div>
     </div>
   );
 };

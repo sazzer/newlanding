@@ -1,6 +1,8 @@
 {
   "title": "New Landing",
   "header": {
-    "toggleNavigation": "Toggle Navigation"
+    "toggleNavigation": "Toggle Navigation",
+    "login": "Log In",
+    "logout": "Log Out"
   }
 }
