@@ -17,14 +17,9 @@ pub async fn test_home_document() {
     check!(response.headers.get("cache-control").unwrap() == "public, max-age=3600");
 
     assert_json_snapshot!(response.to_json().unwrap(), @r###"
-        {
-          "name": "newlanding-service",
-          "version": "0.1.0",
-          "_links": {
-            "self": {
-              "href": "/"
-            }
-          }
-        }
-        "###);
+    {
+      "name": "newlanding-service",
+      "version": "0.1.0"
+    }
+    "###);
 }

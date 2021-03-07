@@ -6,6 +6,7 @@ use tracing_subscriber::layer::SubscriberExt;
 use tracing_subscriber::Registry;
 
 mod home;
+mod http;
 #[cfg(test)]
 mod integration;
 mod server;
@@ -20,7 +21,7 @@ async fn main() {
 
     opentelemetry::global::set_text_map_propagator(opentelemetry_jaeger::Propagator::new());
     let (tracer, _uninstall) = opentelemetry_jaeger::new_pipeline()
-        .with_service_name("newlanding")
+        .with_service_name(env!("CARGO_PKG_NAME"))
         .from_env()
         .install()
         .unwrap();
