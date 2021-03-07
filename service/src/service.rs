@@ -10,7 +10,7 @@ impl Service {
 
         let prometheus = Registry::new();
 
-        let server = crate::server::component::new(prometheus);
+        let server = crate::server::component::new().build(prometheus);
 
         tracing::debug!("Built New Landing");
 

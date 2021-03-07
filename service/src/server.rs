@@ -1,14 +1,21 @@
 pub mod component;
 mod span;
 
+use std::sync::Arc;
+
 use actix_cors::Cors;
 use actix_http::http::header;
-use actix_web::{middleware::Logger, App, HttpServer};
+use actix_web::{middleware::Logger, web::ServiceConfig, App, HttpServer};
 use actix_web_prom::PrometheusMetrics;
 
 pub struct Server {
     port: u16,
     prometheus: prometheus::Registry,
+    pub(super) routes: Vec<Arc<dyn RouteConfigurer>>,
+}
+
+pub trait RouteConfigurer: Send + Sync {
+    fn configure_routes(&self, config: &mut ServiceConfig);
 }
 
 impl Server {
@@ -20,11 +27,13 @@ impl Server {
         let prometheus =
             PrometheusMetrics::new_with_registry(self.prometheus, "actix", Some("/metrics"), None)
                 .unwrap();
+        let routes = self.routes.clone();
 
         HttpServer::new(move || {
             let prometheus = prometheus.clone();
+            let routes = routes.clone();
 
-            let app = App::new()
+            let mut app = App::new()
                 .wrap(prometheus)
                 .wrap(Logger::default())
                 .wrap(
@@ -35,6 +44,12 @@ impl Server {
                         .expose_headers(vec![header::ETAG, header::LOCATION, header::LINK]),
                 )
                 .wrap(span::Span);
+
+            for c in &routes {
+                app = app.configure(move |server_config| {
+                    c.configure_routes(server_config);
+                });
+            }
 
             tracing::trace!("Built listener");
 
