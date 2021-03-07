@@ -5,6 +5,7 @@ use dotenv::dotenv;
 use tracing_subscriber::layer::SubscriberExt;
 use tracing_subscriber::Registry;
 
+mod home;
 #[cfg(test)]
 mod integration;
 mod server;
