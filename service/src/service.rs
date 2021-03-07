@@ -1,3 +1,5 @@
+use prometheus::Registry;
+
 pub struct Service {
     server: crate::server::Server,
 }
@@ -6,7 +8,9 @@ impl Service {
     pub async fn new() -> Self {
         tracing::debug!("Building New Landing");
 
-        let server = crate::server::component::new();
+        let prometheus = Registry::new();
+
+        let server = crate::server::component::new(prometheus);
 
         tracing::debug!("Built New Landing");
 
@@ -15,7 +19,7 @@ impl Service {
         }
     }
 
-    pub async fn start(&self) {
+    pub async fn start(self) {
         tracing::info!("Starting New Landing");
         self.server.start().await;
     }
