@@ -5,6 +5,9 @@ use dotenv::dotenv;
 use tracing_subscriber::layer::SubscriberExt;
 use tracing_subscriber::Registry;
 
+mod server;
+mod service;
+
 #[actix_rt::main]
 async fn main() {
     dotenv().ok();
@@ -21,5 +24,6 @@ async fn main() {
     let subscriber = Registry::default().with(telemetry);
     tracing::subscriber::set_global_default(subscriber).unwrap();
 
-    tracing::info!("Hello");
+    let service = service::Service::new().await;
+    service.start().await;
 }
