@@ -7,6 +7,7 @@ use tracing_subscriber::Registry;
 
 mod server;
 mod service;
+mod settings;
 
 #[actix_rt::main]
 async fn main() {
@@ -24,6 +25,6 @@ async fn main() {
     let subscriber = Registry::default().with(telemetry);
     tracing::subscriber::set_global_default(subscriber).unwrap();
 
-    let service = service::Service::new().await;
+    let service = service::Service::new(settings::load()).await;
     service.start().await;
 }

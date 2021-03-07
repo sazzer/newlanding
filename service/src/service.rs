@@ -1,3 +1,4 @@
+use crate::settings::Settings;
 use prometheus::Registry;
 
 pub struct Service {
@@ -5,12 +6,12 @@ pub struct Service {
 }
 
 impl Service {
-    pub async fn new() -> Self {
+    pub async fn new(cfg: Settings) -> Self {
         tracing::debug!("Building New Landing");
 
         let prometheus = Registry::new();
 
-        let server = crate::server::component::new().build(prometheus);
+        let server = crate::server::component::new().build(cfg.port, prometheus);
 
         tracing::debug!("Built New Landing");
 

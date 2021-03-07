@@ -21,11 +21,11 @@ impl Builder {
 
         self
     }
-    pub fn build(self, prometheus: prometheus::Registry) -> Component {
+    pub fn build(self, port: u16, prometheus: prometheus::Registry) -> Component {
         tracing::debug!("Building HTTP Server component");
         Component {
             server: Server {
-                port: 8000,
+                port,
                 prometheus,
                 routes: self.routes,
             },
