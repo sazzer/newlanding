@@ -6,5 +6,7 @@ pub struct Component {
 
 pub fn new() -> Component {
     tracing::debug!("Building HTTP Server component");
-    Component { server: Server {} }
+    Component { server: Server {
+        port: 8000,
+    } }
 }
