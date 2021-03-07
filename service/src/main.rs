@@ -13,6 +13,7 @@ mod model;
 mod server;
 mod service;
 mod settings;
+mod users;
 
 #[actix_rt::main]
 async fn main() {
