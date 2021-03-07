@@ -19,7 +19,12 @@ pub async fn test_home_document() {
     assert_json_snapshot!(response.to_json().unwrap(), @r###"
     {
       "name": "newlanding-service",
-      "version": "0.1.0"
+      "version": "0.1.0",
+      "_links": {
+        "self": {
+          "href": "/"
+        }
+      }
     }
     "###);
 }

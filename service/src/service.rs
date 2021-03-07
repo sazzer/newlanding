@@ -14,7 +14,7 @@ impl Service {
 
         let prometheus = Registry::new();
 
-        let home = crate::home::component::new();
+        let home = crate::home::component::new().build();
 
         let server = crate::server::component::new()
             .with_routes(home)
