@@ -1097,6 +1097,7 @@ dependencies = [
  "actix-web",
  "dotenv",
  "env_logger",
+ "futures",
  "opentelemetry",
  "opentelemetry-jaeger",
  "tracing",

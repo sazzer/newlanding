@@ -16,7 +16,7 @@ async fn main() {
 
     opentelemetry::global::set_text_map_propagator(opentelemetry_jaeger::Propagator::new());
     let (tracer, _uninstall) = opentelemetry_jaeger::new_pipeline()
-        .with_service_name("bigbang")
+        .with_service_name("newlanding")
         .from_env()
         .install()
         .unwrap();
