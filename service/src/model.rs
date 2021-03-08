@@ -1,6 +1,7 @@
 use chrono::{DateTime, Utc};
 use uuid::Uuid;
 
+#[derive(Debug)]
 pub struct Identity<I> {
     pub id: I,
     pub version: Uuid,
@@ -26,6 +27,7 @@ where
     }
 }
 
+#[derive(Debug)]
 pub struct Resource<I, D> {
     pub identity: Identity<I>,
     pub data: D,

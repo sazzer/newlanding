@@ -14,10 +14,12 @@ impl Service {
 
         let prometheus = Registry::new();
 
+        let users = crate::users::component::new();
         let home = crate::home::component::new().build();
 
         let server = crate::server::component::new()
             .with_routes(home)
+            .with_routes(users)
             .build(cfg.port, prometheus);
 
         tracing::debug!("Built New Landing");
