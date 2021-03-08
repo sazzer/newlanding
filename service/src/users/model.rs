@@ -1,7 +1,9 @@
+mod user_id;
+
 use crate::model::Resource;
+pub use user_id::*;
 
-pub struct UserId(String);
-
+#[derive(Debug)]
 pub struct UserData {
     pub display_name: String,
     pub email: String,

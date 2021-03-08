@@ -30,7 +30,9 @@ config = "0.10.1"
 async-trait = "0.1.42"
 uuid = {version = "0.8.2", features = ["v4", "serde"] }
 chrono = { version = "0.4.19", features = ["serde"] }
+thiserror = "1.0.23"
 
 [dev-dependencies]
 assert2 = "0.3.4"
 insta = "1.5.3"
+test-case = "1.1.0"
