@@ -14,7 +14,7 @@ impl GetUserUseCase {
         let user = UserResource {
             identity: Identity {
                 id: id.clone(),
-                version: Uuid::new_v4(),
+                version: Uuid::new_v4().to_string(),
                 created: Utc::now(),
                 updated: Utc::now(),
             },

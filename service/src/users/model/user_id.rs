@@ -1,5 +1,7 @@
 use std::str::FromStr;
 
+use crate::http::hal::Link;
+
 #[derive(Debug, PartialEq, Clone)]
 pub struct UserId(String);
 
@@ -19,6 +21,12 @@ impl FromStr for UserId {
         } else {
             Ok(UserId(trimmed.to_owned()))
         }
+    }
+}
+
+impl From<UserId> for Link {
+    fn from(user_id: UserId) -> Self {
+        format!("/users/{}", user_id.0).into()
     }
 }
 

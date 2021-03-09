@@ -4,7 +4,7 @@ use uuid::Uuid;
 #[derive(Debug)]
 pub struct Identity<I> {
     pub id: I,
-    pub version: Uuid,
+    pub version: String,
     pub created: DateTime<Utc>,
     pub updated: DateTime<Utc>,
 }
@@ -16,7 +16,7 @@ where
     fn default() -> Self {
         let id = I::default();
         let now = Utc::now();
-        let version = Uuid::new_v4();
+        let version = Uuid::new_v4().to_string();
 
         Self {
             id,

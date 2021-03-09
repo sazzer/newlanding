@@ -1,5 +1,7 @@
-mod links;
 mod document;
+mod links;
+mod response;
 
-pub use links::*;
 pub use document::*;
+pub use links::*;
+pub use response::*;
