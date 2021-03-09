@@ -1,4 +1,5 @@
 pub mod hal;
+pub mod problem;
 
 use actix_http::{
     http::{header::Header, HeaderMap, StatusCode},
