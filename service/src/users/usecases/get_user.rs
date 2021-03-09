@@ -1,31 +1,15 @@
-use chrono::Utc;
-use uuid::Uuid;
+use crate::users::{repository::UserRepository, UserId, UserResource};
 
-use crate::{
-    model::Identity,
-    users::{UserData, UserId, UserResource},
-};
-
-pub struct GetUserUseCase {}
+pub struct GetUserUseCase {
+    repository: UserRepository,
+}
 
 impl GetUserUseCase {
+    pub fn new(repository: UserRepository) -> Self {
+        Self { repository }
+    }
     #[tracing::instrument(skip(self))]
     pub async fn get_user_by_id(&self, id: &UserId) -> Option<UserResource> {
-        let user = UserResource {
-            identity: Identity {
-                id: id.clone(),
-                version: Uuid::new_v4().to_string(),
-                created: Utc::now(),
-                updated: Utc::now(),
-            },
-            data: UserData {
-                display_name: "Graham".to_owned(),
-                email: "graham@grahamcox.co.uk".to_owned(),
-                email_verified: true,
-                social_provider: None,
-            },
-        };
-
-        Some(user)
+        self.repository.get_user_by_id(id).await
     }
 }

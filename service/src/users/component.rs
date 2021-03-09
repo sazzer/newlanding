@@ -3,15 +3,17 @@ use std::sync::Arc;
 use crate::server::RouteConfigurer;
 use actix_web::web::ServiceConfig;
 
-use super::GetUserUseCase;
+use super::{repository::UserRepository, GetUserUseCase};
 
 pub struct Component {
     get_user_use_case: Arc<GetUserUseCase>,
 }
 
 pub fn new() -> Arc<Component> {
+    let repository = UserRepository::new();
+
     let component = Component {
-        get_user_use_case: Arc::new(GetUserUseCase {}),
+        get_user_use_case: Arc::new(GetUserUseCase::new(repository)),
     };
 
     Arc::new(component)
