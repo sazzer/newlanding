@@ -3,7 +3,7 @@ use std::sync::Arc;
 use crate::server::RouteConfigurer;
 use actix_web::web::ServiceConfig;
 
-use super::{repository::UserRepository, GetUserUseCase};
+use super::{auth0::UserRepository, GetUserUseCase};
 
 pub struct Component {
     get_user_use_case: Arc<GetUserUseCase>,

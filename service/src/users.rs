@@ -1,7 +1,7 @@
+mod auth0;
 pub mod component;
 mod http;
 mod model;
-mod repository;
 mod usecases;
 
 pub use model::*;

@@ -1,4 +1,4 @@
-use crate::users::{repository::UserRepository, UserId, UserResource};
+use crate::users::{auth0::UserRepository, UserId, UserResource};
 
 pub struct GetUserUseCase {
     repository: UserRepository,
