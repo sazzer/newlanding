@@ -1,14 +1,23 @@
 use super::auth0::{ClientId, ClientSecret, Domain};
+use super::{auth0::UserRepository, GetUserUseCase};
 use crate::server::RouteConfigurer;
 use actix_web::web::ServiceConfig;
 use std::sync::Arc;
 
-use super::{auth0::UserRepository, GetUserUseCase};
-
+/// Users component for working with users, working in terms of Auth0.
 pub struct Component {
     get_user_use_case: Arc<GetUserUseCase>,
 }
 
+/// Create a new instance of the Users component
+///
+/// # Parameters
+/// - `domain` - The Auth0 domain to work with
+/// - `client_id` - The Auth0 Client ID
+/// - `client_secret` - The Auth0 Client Secret
+///
+/// # Returns
+/// The Users component
 pub fn new<D, I, S>(domain: D, client_id: I, client_secret: S) -> Arc<Component>
 where
     D: Into<String>,

@@ -8,12 +8,14 @@ use actix_web::web::Data;
 use serde::Serialize;
 use std::sync::Arc;
 
+/// The actual home document contents.
 #[derive(Serialize)]
 pub struct HomeDocument {
     pub name: &'static str,
     pub version: &'static str,
 }
 
+/// Generate the home document
 pub async fn handle(
     home_links: Data<Arc<HomeLinksUseCase>>,
 ) -> Response<SimpleRespondable<HalDocument>> {

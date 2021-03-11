@@ -1,10 +1,11 @@
+use crate::http::hal::Link;
 use std::str::FromStr;
 
-use crate::http::hal::Link;
-
+/// Representation of the ID of a user.
 #[derive(Debug, PartialEq, Clone)]
 pub struct UserId(String);
 
+/// Errors that can occur when parsing a User ID from a string.
 #[derive(Debug, PartialEq, thiserror::Error)]
 pub enum ParseUserIdError {
     #[error("The User ID was blank")]

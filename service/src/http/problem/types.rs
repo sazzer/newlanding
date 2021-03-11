@@ -14,13 +14,14 @@ pub struct SimpleProblemType {
 }
 
 impl ProblemType for SimpleProblemType {
-    /// A URI Reference that identifies the problem type.
+    /// Determine the value to use for the problem type.
     fn problem_type(&self) -> &'static str {
         self.problem_type
     }
 }
 
 impl ProblemTypeStatus for SimpleProblemType {
+    /// Determine the status code for the problem.
     fn status_code(&self) -> StatusCode {
         self.status_code
     }
@@ -38,6 +39,7 @@ impl From<SimpleProblemType> for Problem {
     }
 }
 
+/// Problem to indicate that a resource was not found.
 pub const NOT_FOUND: SimpleProblemType = SimpleProblemType {
     problem_type: "about:blank",
     problem_title: "The requested resource was not found",

@@ -8,10 +8,15 @@ use std::{
     time::{Duration, SystemTime},
 };
 
+/// Type-safe representation of the Auth0 Client ID.
 #[derive(Debug, Serialize)]
 pub struct ClientId(String);
 
 impl ClientId {
+    /// Create a new instance of the Auth0 Client ID from the given string
+    ///
+    /// # Parameters
+    /// - `client_id` - The Client ID
     pub fn new<S>(client_id: S) -> Self
     where
         S: Into<String>,
@@ -20,10 +25,15 @@ impl ClientId {
     }
 }
 
+/// Type-safe representation of the Auth0 Client ID.
 #[derive(Debug, Serialize)]
 pub struct ClientSecret(String);
 
 impl ClientSecret {
+    /// Create a new instance of the Auth0 Client Secret from the given string
+    ///
+    /// # Parameters
+    /// - `client_secret` - The Client Secret
     pub fn new<S>(client_secret: S) -> Self
     where
         S: Into<String>,
@@ -32,9 +42,11 @@ impl ClientSecret {
     }
 }
 
+/// Representation of an actual access token to use with Auth0.
 #[derive(Debug, Deserialize, PartialEq, Clone)]
 pub struct AccessToken(String);
 
+/// Mechanism to use to retrieve access tokens to sue with Auth0.
 pub struct Retriever {
     domain: Domain,
     client_id: ClientId,
@@ -43,25 +55,13 @@ pub struct Retriever {
     cache: Mutex<RefCell<CacheEntry>>,
 }
 
-#[derive(Debug, Deserialize)]
-struct AccessTokenResponse {
-    access_token: AccessToken,
-    expires_in: u64,
-}
-
-#[derive(Debug)]
-struct CacheEntry {
-    expires: SystemTime,
-    token: Option<AccessToken>,
-}
-
-impl CacheEntry {
-    fn expired(&self) -> bool {
-        self.token.is_none() || self.expires < SystemTime::now()
-    }
-}
-
 impl Retriever {
+    /// Create a new instance of the `Retriever`
+    ///
+    /// # Parameters
+    /// - `domain` - the Auth0 domain, including the HTTP scheme. For example "https://example.eu.auth0.com"
+    /// - `client_id` - the Auth0 Client ID for this Auth0 M2M Application.
+    /// - `client_secret` - the Auth0 Client Secret for this Auth0 M2M Application.
     pub fn new(domain: Domain, client_id: ClientId, client_secret: ClientSecret) -> Self {
         let cache_entry = CacheEntry {
             expires: SystemTime::UNIX_EPOCH,
@@ -77,6 +77,12 @@ impl Retriever {
         }
     }
 
+    /// Get an access token to use.
+    /// If we have a valid cached version then this will be returned as-is, otherwise a new one will be fetched
+    ///
+    /// # Returns
+    /// The access token to use.
+    /// If we fail to fetch a token for any reason then instead `None` is returned.
     #[tracing::instrument(skip(self))]
     pub async fn get_access_token(&self) -> Option<AccessToken> {
         let lock = self.cache.lock().unwrap();
@@ -100,6 +106,8 @@ impl Retriever {
         entry.token.clone()
     }
 
+    /// Clear the cached value.
+    /// This allows subsequent calls to `get_access_token()` to instead fetch a new one from Auth0.
     #[tracing::instrument(skip(self))]
     pub fn clear_cache(&self) {
         tracing::debug!("Clearing cached access token");
@@ -108,6 +116,11 @@ impl Retriever {
         entry.token = None;
     }
 
+    /// Actually call Auth0 to fetch a new access token.
+    ///
+    /// # Returns
+    /// The access token to use.
+    /// If we fail to fetch a token for any reason then instead `None` is returned.
     #[tracing::instrument(skip(self))]
     async fn fetch_access_token(&self) -> Option<(AccessToken, u64)> {
         let request = json!({
@@ -157,6 +170,32 @@ impl Retriever {
         tracing::debug!(result = ?body, "Access token body");
 
         Some((body.access_token, body.expires_in))
+    }
+}
+
+/// Representation of the Auth0 response when retrieving an access token.
+#[derive(Debug, Deserialize)]
+struct AccessTokenResponse {
+    access_token: AccessToken,
+    expires_in: u64,
+}
+
+/// Wrapper around an access token and when it expires, to support caching.
+#[derive(Debug)]
+struct CacheEntry {
+    expires: SystemTime,
+    token: Option<AccessToken>,
+}
+
+impl CacheEntry {
+    /// Check if the cache entry has expired.
+    /// Also returns true if we simply don't have an entry cached.
+    ///
+    /// # Returns
+    /// `true` if this cache entry is expired or else doesn't have a value.
+    /// `false` if this cache entry has a value that is believed to be valid to use.
+    fn expired(&self) -> bool {
+        self.token.is_none() || self.expires < SystemTime::now()
     }
 }
 

@@ -135,7 +135,7 @@ mod tests {
 
     impl ProblemType for ProblemDetails {
         fn problem_type(&self) -> &'static str {
-            "tag:nrl,2020:some/problem"
+            "tag:new_landing,2021:some/problem"
         }
     }
 
@@ -157,7 +157,10 @@ mod tests {
             Problem::new_with_status(ProblemDetails::SomeProblem, StatusCode::BAD_REQUEST);
 
         assert_eq!(StatusCode::BAD_REQUEST, problem.status);
-        assert_eq!("tag:nrl,2020:some/problem", problem.error.problem_type());
+        assert_eq!(
+            "tag:new_landing,2021:some/problem",
+            problem.error.problem_type()
+        );
         assert_eq!(None, problem.detail);
         assert_eq!(None, problem.instance);
         assert_eq!(0, problem.extra.len());
@@ -168,7 +171,10 @@ mod tests {
         let problem = Problem::new(ProblemDetails::SomeProblem);
 
         assert_eq!(StatusCode::NO_CONTENT, problem.status);
-        assert_eq!("tag:nrl,2020:some/problem", problem.error.problem_type());
+        assert_eq!(
+            "tag:new_landing,2021:some/problem",
+            problem.error.problem_type()
+        );
         assert_eq!(None, problem.detail);
         assert_eq!(None, problem.instance);
         assert_eq!(0, problem.extra.len());
@@ -184,7 +190,10 @@ mod tests {
                 .with_extra("other_key", 42);
 
         assert_eq!(StatusCode::BAD_REQUEST, problem.status);
-        assert_eq!("tag:nrl,2020:some/problem", problem.error.problem_type());
+        assert_eq!(
+            "tag:new_landing,2021:some/problem",
+            problem.error.problem_type()
+        );
         assert_eq!(Some("Some Detail".to_owned()), problem.detail);
         assert_eq!(Some("Some Instance".to_owned()), problem.instance);
         assert_eq!(2, problem.extra.len());

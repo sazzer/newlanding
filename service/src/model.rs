@@ -1,6 +1,10 @@
 use chrono::{DateTime, Utc};
 use uuid::Uuid;
 
+/// Representation of the identity of some resource
+///
+/// # Types
+/// - `I` - The type to use for the resource ID
 #[derive(Debug)]
 pub struct Identity<I> {
     pub id: I,
@@ -27,6 +31,11 @@ where
     }
 }
 
+/// Representation of a persisted resource
+///
+/// # Types
+/// - `I` - The type to use for the resource ID
+/// - `D` - The type to use for the resource data.
 #[derive(Debug)]
 pub struct Resource<I, D> {
     pub identity: Identity<I>,

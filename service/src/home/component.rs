@@ -1,25 +1,29 @@
-use std::sync::Arc;
-
+use super::{HomeLinksUseCase, LinkContributor};
 use crate::server::RouteConfigurer;
 use actix_web::web::ServiceConfig;
+use std::sync::Arc;
 
-use super::{HomeLinksUseCase, LinkContributor};
-
+/// Component for the home document.
 pub struct Component {
     service: Arc<HomeLinksUseCase>,
 }
 
+/// Builder for building the home document component.
 #[derive(Default)]
 pub struct Builder {
     contributors: Vec<Arc<dyn LinkContributor>>,
 }
 
+/// Create a new instance of the home document builder.
 pub fn new() -> Builder {
     Builder::default().with_contributor(Arc::new(vec![("self".to_owned(), "/".into())]))
 }
 
 impl Builder {
     /// Add a new contributor of links to the home document.
+    ///
+    /// # Parameters
+    /// - `contributor` - The contributor that can add to the home document
     #[allow(dead_code)]
     pub fn with_contributor(mut self, contributor: Arc<dyn LinkContributor>) -> Self {
         self.contributors.push(contributor);

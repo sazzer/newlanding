@@ -5,15 +5,22 @@ use serde::Serialize;
 use serde_json::Value;
 use std::collections::BTreeMap;
 
+/// Representation of a HAL document.
 #[derive(Debug, Serialize, Clone, PartialEq)]
 pub struct HalDocument {
+    /// The actual data in the document.
     #[serde(flatten)]
     pub data: Value,
+
+    /// The set of linsk in the document.
     #[serde(rename = "_links", skip_serializing_if = "BTreeMap::is_empty")]
     pub links: BTreeMap<String, Links>,
 }
 
 impl HalDocument {
+    /// Create a new document for the provided data
+    ///
+    /// - `data` - The data to represent in the HAL document.
     pub fn new<T>(data: T) -> Self
     where
         T: Serialize,
@@ -26,20 +33,24 @@ impl HalDocument {
         }
     }
 
-    pub fn with_link<N, L>(mut self, name: N, link: L) -> Self
+    /// Add a new link to the document
+    ///
+    /// - `rel` - The link relation  of the link
+    /// - `link` - The actual link
+    pub fn with_link<N, L>(mut self, rel: N, link: L) -> Self
     where
         N: Into<String>,
         L: Into<Link>,
     {
-        let name = name.into();
+        let rel = rel.into();
         let link = link.into();
 
-        let links = match self.links.remove(&name) {
+        let links = match self.links.remove(&rel) {
             None => Links::Single(link),
             Some(links) => links.append(link),
         };
 
-        self.links.insert(name, links);
+        self.links.insert(rel, links);
 
         self
     }

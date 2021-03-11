@@ -18,7 +18,7 @@ pub async fn test_home_document() {
 
     assert_json_snapshot!(response.to_json().unwrap(), @r###"
     {
-      "name": "newlanding-service",
+      "name": "newlanding_service",
       "version": "0.1.0",
       "_links": {
         "self": {

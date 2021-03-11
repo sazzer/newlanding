@@ -1387,7 +1387,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "newlanding-service"
+name = "newlanding_service"
 version = "0.1.0"
 dependencies = [
  "actix-cors",

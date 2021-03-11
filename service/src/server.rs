@@ -8,17 +8,24 @@ use actix_http::http::header;
 use actix_web::{middleware::Logger, web::ServiceConfig, App, HttpServer};
 use actix_web_prom::PrometheusMetrics;
 
+/// The HTTP Server running the application.
 pub struct Server {
     port: u16,
     prometheus: prometheus::Registry,
     pub(super) routes: Vec<Arc<dyn RouteConfigurer>>,
 }
 
+/// Trait that can be implemented by other components to configure routes into the HTTP Server.
 pub trait RouteConfigurer: Send + Sync {
+    /// Configure some routes onto the provided HTTP Server configuration.
+    ///
+    /// # Parameters
+    /// - `config` - The HTTP Server configuration to wire the routes onto
     fn configure_routes(&self, config: &mut ServiceConfig);
 }
 
 impl Server {
+    /// Start the server listening on the configured port.
     pub async fn start(self) {
         let address = format!("0.0.0.0:{}", self.port);
 

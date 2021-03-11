@@ -1,9 +1,3 @@
-use actix_http::http::{
-    header::{CacheControl, CacheDirective, ETag, EntityTag},
-    StatusCode,
-};
-use serde::Serialize;
-
 use crate::{
     http::{
         hal::{HalDocument, HalRespondable},
@@ -11,7 +5,13 @@ use crate::{
     },
     users::UserResource,
 };
+use actix_http::http::{
+    header::{CacheControl, CacheDirective, ETag, EntityTag},
+    StatusCode,
+};
+use serde::Serialize;
 
+/// Representation of a User on the HTTP API.
 #[derive(Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct UserModel {

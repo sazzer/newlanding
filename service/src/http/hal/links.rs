@@ -1,8 +1,11 @@
 use serde::Serialize;
 
+/// Representation of a single link in a HAL document
 #[derive(Debug, Serialize, Clone, PartialEq)]
 pub struct Link {
+    /// The href of the link itself
     pub href: String,
+    /// The name of the link, if needed to disambiguate.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
 }
@@ -19,14 +22,21 @@ where
     }
 }
 
+/// Representation of a set of 1+ links.
 #[derive(Debug, Serialize, Clone, PartialEq)]
 #[serde(untagged)]
 pub enum Links {
+    /// Wrapper around a single link
     Single(Link),
+    /// Wrapper around multiple links.
     Multiple(Vec<Link>),
 }
 
 impl Links {
+    /// Append a new link. This will ensure that the end result is a `Links::Multiple` even if the input was a `Links::Single`.
+    ///
+    /// # Parameters
+    /// - `link` - The link to append
     pub fn append(self, link: Link) -> Self {
         let links = match self {
             Links::Single(previous) => {

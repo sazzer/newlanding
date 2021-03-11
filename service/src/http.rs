@@ -14,16 +14,25 @@ pub trait Respondable {
     type Body: Serialize;
 
     /// Generate the status code for the response
+    ///
+    /// # Returns
+    /// The status code to send back to the client
     fn status_code(&self) -> StatusCode {
         StatusCode::OK
     }
 
     /// Generate any headers for the response
+    ///
+    /// # Returns
+    /// The headers to send back to the client
     fn headers(&self) -> HeaderMap {
         HeaderMap::new()
     }
 
     /// Retrieve the body of the response
+    ///
+    /// # Returns
+    /// The body to send back to the client
     fn body(self) -> Self::Body;
 }
 
@@ -39,6 +48,9 @@ where
 }
 
 /// Simple implementation of the Respondable trait.
+///
+/// # Types
+/// - `T` - The type to use for the response body.
 pub struct SimpleRespondable<T>
 where
     T: Serialize,
@@ -52,7 +64,10 @@ impl<T> SimpleRespondable<T>
 where
     T: Serialize,
 {
-    /// Create a new instance of the `SimpleRespondable` struct wrapping the provided body
+    /// Create a new instance of the `SimpleRespondable` struct wrapping the provided body.
+    ///
+    /// # Parameters
+    /// - `body` - The body to send back to the client.
     pub fn new(body: T) -> Self {
         Self {
             status_code: StatusCode::OK,
@@ -61,13 +76,19 @@ where
         }
     }
 
-    /// Specify the status code to use
+    /// Specify the status code to use.
+    ///
+    /// # Parameters
+    /// - `status_code` - The status code to use
     pub fn with_status_code(mut self, status_code: StatusCode) -> Self {
         self.status_code = status_code;
         self
     }
 
-    /// Specify a header to use
+    /// Specify a header to include in the response.
+    ///
+    /// # Parameters
+    /// - `header` - The header to add to the response.
     pub fn with_header<H>(mut self, header: H) -> Self
     where
         H: Header,
@@ -116,6 +137,9 @@ where
 }
 
 /// Wrapper for any HTTP Response, implementing the standard requirements.
+///
+/// # Types
+/// - `R` - The exact type of `Respondable` to wrap.
 pub struct Response<R>(pub R)
 where
     R: Respondable,

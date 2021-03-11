@@ -6,8 +6,7 @@ use actix_web::{dev::ServiceRequest, dev::ServiceResponse, Error};
 use futures::future::{ok, Ready};
 use futures::Future;
 
-/// Middleware for applying a tracing `Span` around the entire HTTP request, and tracking certain
-/// details on it.
+/// Middleware for applying a tracing `Span` around the entire HTTP request, and tracking certain details on it.
 pub struct Span;
 
 impl<S, B> Transform<S> for Span

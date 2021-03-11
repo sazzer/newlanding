@@ -1,20 +1,12 @@
 #![deny(clippy::all, clippy::pedantic)]
 #![allow(clippy::module_name_repetitions)]
 
+use config::{Config, Environment};
 use dotenv::dotenv;
 use tracing_subscriber::layer::SubscriberExt;
 use tracing_subscriber::Registry;
 
-mod home;
-mod http;
-#[cfg(test)]
-mod integration;
-mod model;
-mod server;
-mod service;
-mod settings;
-mod users;
-
+/// Main entry point for the entire application.
 #[actix_rt::main]
 async fn main() {
     dotenv().ok();
@@ -31,6 +23,21 @@ async fn main() {
     let subscriber = Registry::default().with(telemetry);
     tracing::subscriber::set_global_default(subscriber).unwrap();
 
-    let service = service::Service::new(settings::load()).await;
+    let service = newlanding_service_lib::Service::new(load_settings()).await;
     service.start().await;
+}
+
+/// Load the application settings from the environment.
+///
+/// # Returns
+/// The loaded settings.
+fn load_settings() -> newlanding_service_lib::Settings {
+    let mut s = Config::new();
+    s.set_default("port", 8000)
+        .expect("Failed to set default value for 'port'");
+
+    s.merge(Environment::default())
+        .expect("Failed to load environment properties");
+
+    s.try_into().expect("Failed to build settings from config")
 }
