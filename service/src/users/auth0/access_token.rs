@@ -1,3 +1,4 @@
+use super::domain::Domain;
 use reqwest::{Client, StatusCode};
 use serde::{Deserialize, Serialize};
 use serde_json::json;
@@ -35,7 +36,7 @@ impl CacheEntry {
 }
 
 pub struct Retriever {
-    domain: String,
+    domain: Domain,
     client_id: ClientId,
     client_secret: ClientSecret,
     client: Client,
@@ -43,7 +44,7 @@ pub struct Retriever {
 }
 
 impl Retriever {
-    pub fn new(domain: String, client_id: ClientId, client_secret: ClientSecret) -> Self {
+    pub fn new(domain: Domain, client_id: ClientId, client_secret: ClientSecret) -> Self {
         let cache_entry = CacheEntry {
             expires: SystemTime::UNIX_EPOCH,
             token: None,
@@ -94,13 +95,13 @@ impl Retriever {
         let request = json!({
           "client_id": self.client_id,
           "client_secret": self.client_secret,
-          "audience": format!("{}/api/v2/", self.domain),
+          "audience": self.domain.build_url("/api/v2/"),
           "grant_type": "client_credentials"
         });
 
         let result = self
             .client
-            .post(&format!("{}/oauth/token", self.domain))
+            .post(&self.domain.build_url("/oauth/token"))
             .json(&request)
             .send()
             .await;
@@ -163,7 +164,7 @@ mod tests {
             .create();
 
         let sut = Retriever::new(
-            mockito::server_url(),
+            Domain::new(mockito::server_url()),
             ClientId("testClientId".to_owned()),
             ClientSecret("testClientSecret".to_owned()),
         );
@@ -198,7 +199,7 @@ mod tests {
             .create();
 
         let sut = Retriever::new(
-            mockito::server_url(),
+            Domain::new(mockito::server_url()),
             ClientId("testClientId".to_owned()),
             ClientSecret("testClientSecret".to_owned()),
         );
@@ -232,7 +233,7 @@ mod tests {
             .create();
 
         let sut = Retriever::new(
-            mockito::server_url(),
+            Domain::new(mockito::server_url()),
             ClientId("testClientId".to_owned()),
             ClientSecret("testClientSecret".to_owned()),
         );
@@ -271,7 +272,7 @@ mod tests {
             .create();
 
         let sut = Retriever::new(
-            mockito::server_url(),
+            Domain::new(mockito::server_url()),
             ClientId("testClientId".to_owned()),
             ClientSecret("testClientSecret".to_owned()),
         );
@@ -308,7 +309,7 @@ mod tests {
             .create();
 
         let sut = Retriever::new(
-            mockito::server_url(),
+            Domain::new(mockito::server_url()),
             ClientId("testClientId".to_owned()),
             ClientSecret("testClientSecret".to_owned()),
         );

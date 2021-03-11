@@ -1,4 +1,5 @@
 mod access_token;
+mod domain;
 mod get_user;
 
 pub struct UserRepository {}
