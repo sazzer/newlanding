@@ -9,6 +9,8 @@ use uuid::Uuid;
 impl UserRepository {
     #[tracing::instrument(skip(self))]
     pub async fn get_user_by_id(&self, id: &UserId) -> Option<UserResource> {
+        let _access_token = self.access_token_retriever.get_access_token().await;
+
         let user = UserResource {
             identity: Identity {
                 id: id.clone(),

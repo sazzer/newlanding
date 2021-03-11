@@ -4,8 +4,10 @@ use serde::Deserialize;
 #[derive(Debug, Deserialize)]
 pub struct Settings {
     pub port: u16,
+    pub auth0_domain: String,
+    pub auth0_client_id: String,
+    pub auth0_client_secret: String,
 }
-
 pub fn load() -> Settings {
     let mut s = Config::new();
     s.set_default("port", 8000)

@@ -8,14 +8,40 @@ use std::{
     time::{Duration, SystemTime},
 };
 
-#[derive(Debug, Deserialize, PartialEq, Clone)]
-pub struct AccessToken(String);
-
 #[derive(Debug, Serialize)]
 pub struct ClientId(String);
 
+impl ClientId {
+    pub fn new<S>(client_id: S) -> Self
+    where
+        S: Into<String>,
+    {
+        Self(client_id.into())
+    }
+}
+
 #[derive(Debug, Serialize)]
 pub struct ClientSecret(String);
+
+impl ClientSecret {
+    pub fn new<S>(client_secret: S) -> Self
+    where
+        S: Into<String>,
+    {
+        Self(client_secret.into())
+    }
+}
+
+#[derive(Debug, Deserialize, PartialEq, Clone)]
+pub struct AccessToken(String);
+
+pub struct Retriever {
+    domain: Domain,
+    client_id: ClientId,
+    client_secret: ClientSecret,
+    client: Client,
+    cache: Mutex<RefCell<CacheEntry>>,
+}
 
 #[derive(Debug, Deserialize)]
 struct AccessTokenResponse {
@@ -33,14 +59,6 @@ impl CacheEntry {
     fn expired(&self) -> bool {
         self.token.is_none() || self.expires < SystemTime::now()
     }
-}
-
-pub struct Retriever {
-    domain: Domain,
-    client_id: ClientId,
-    client_secret: ClientSecret,
-    client: Client,
-    cache: Mutex<RefCell<CacheEntry>>,
 }
 
 impl Retriever {
@@ -99,6 +117,8 @@ impl Retriever {
           "grant_type": "client_credentials"
         });
 
+        tracing::debug!(request = ?request, "Request for access token");
+
         let result = self
             .client
             .post(&self.domain.build_url("/oauth/token"))
@@ -113,6 +133,10 @@ impl Retriever {
                     Some(r)
                 } else {
                     tracing::error!(response = ?r, "Failed to request access token");
+
+                    let body = r.text().await;
+                    tracing::error!(response_body = ?body, "Response body from failure");
+
                     None
                 }
             }
