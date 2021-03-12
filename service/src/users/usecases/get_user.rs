@@ -23,7 +23,7 @@ impl GetUserUseCase {
     /// # Returns
     /// The details of the user, or `None` if the user couldn't be found.
     #[tracing::instrument(skip(self))]
-    pub async fn get_user_by_id(&self, id: &UserId) -> Option<UserResource> {
+    pub async fn get_user_by_id(&self, id: UserId) -> Option<UserResource> {
         self.repository.get_user_by_id(id).await
     }
 }

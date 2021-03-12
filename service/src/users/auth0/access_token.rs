@@ -4,6 +4,7 @@ use serde::{Deserialize, Serialize};
 use serde_json::json;
 use std::{
     cell::RefCell,
+    fmt::{Display, Formatter},
     sync::Mutex,
     time::{Duration, SystemTime},
 };
@@ -45,6 +46,12 @@ impl ClientSecret {
 /// Representation of an actual access token to use with Auth0.
 #[derive(Debug, Deserialize, PartialEq, Clone)]
 pub struct AccessToken(String);
+
+impl Display for AccessToken {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.0)
+    }
+}
 
 /// Mechanism to use to retrieve access tokens to sue with Auth0.
 pub struct Retriever {

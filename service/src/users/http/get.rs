@@ -21,7 +21,7 @@ pub async fn handle(
     })?;
 
     let user = get_user_use_case
-        .get_user_by_id(&user_id)
+        .get_user_by_id(user_id)
         .await
         .ok_or_else(|| Problem::from(NOT_FOUND))?;
 

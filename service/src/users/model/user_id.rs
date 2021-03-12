@@ -1,5 +1,6 @@
 use crate::http::hal::Link;
 use std::str::FromStr;
+use uritemplate::{IntoTemplateVar, TemplateVar, UriTemplate};
 
 /// Representation of the ID of a user.
 #[derive(Debug, PartialEq, Clone)]
@@ -27,7 +28,23 @@ impl FromStr for UserId {
 
 impl From<UserId> for Link {
     fn from(user_id: UserId) -> Self {
-        format!("/users/{}", user_id.0).into()
+        UriTemplate::new("/users/{id}")
+            .set("id", user_id.0)
+            .build()
+            .into()
+    }
+}
+
+impl IntoTemplateVar for UserId {
+    fn into_template_var(self) -> TemplateVar {
+        TemplateVar::Scalar(self.0)
+    }
+}
+
+#[cfg(test)]
+impl PartialEq<&str> for UserId {
+    fn eq(&self, other: &&str) -> bool {
+        self.0 == *other
     }
 }
 

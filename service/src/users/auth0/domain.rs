@@ -1,4 +1,7 @@
+use uritemplate::UriTemplate;
+
 /// Representation of the Auth0 domain name.
+#[derive(Debug, Clone)]
 pub struct Domain(String);
 
 impl Domain {
@@ -25,6 +28,20 @@ impl Domain {
         S: Into<String>,
     {
         format!("{}{}", self.0, url.into())
+    }
+
+    /// Helper to build a URL Template for this domain
+    ///
+    /// # Parameters
+    /// - `url` - The URL template to use under this domain
+    ///
+    /// # Returns
+    /// The URL Template
+    pub fn build_url_template<S>(&self, url: S) -> UriTemplate
+    where
+        S: Into<String>,
+    {
+        UriTemplate::new(&self.build_url(url))
     }
 }
 
