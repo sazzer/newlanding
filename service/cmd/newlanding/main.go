@@ -17,5 +17,7 @@ func main() {
 
 	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stdout, TimeFormat: time.RFC3339}).With().Caller().Logger()
 
-	log.Debug().Msg("Hello")
+	c := loadConfig()
+
+	log.Debug().Interface("cfg", c).Msg("Hello")
 }
