@@ -28,6 +28,7 @@ func New(cfg Config) Service {
 	}
 }
 
+// Start the service running.
 func (s Service) Start() {
 	log.Info().Msg("Starting New Landing")
 	s.server.Start()
