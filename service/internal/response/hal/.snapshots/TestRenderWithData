@@ -1,0 +1,28 @@
+{
+  "_links": {
+    "colour": [
+      {
+        "href": "/colours/red",
+        "name": "red"
+      },
+      {
+        "href": "/colours/green",
+        "name": "green"
+      },
+      {
+        "href": "/colours/blue",
+        "name": "blue"
+      }
+    ],
+    "self": {
+      "href": "/"
+    }
+  },
+  "name": "Graham",
+  "age": 38,
+  "colours": [
+    "red",
+    "green",
+    "blue"
+  ]
+}

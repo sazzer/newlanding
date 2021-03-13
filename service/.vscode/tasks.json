@@ -3,7 +3,7 @@
 	"tasks": [
 		{
 			"type": "shell",
-			"command": "nodemon --ext go --signal SIGTERM --exec 'go run ./cmd/newlanding/...'",
+			"command": "go run ./cmd/newlanding/...",
 			"group": "build",
 			"problemMatcher": ["$go"],
 			"label": "go: run"

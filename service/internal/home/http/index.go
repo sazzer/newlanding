@@ -1,11 +1,14 @@
 package http
 
 import (
-	"net/http"
-
 	"github.com/labstack/echo/v4"
+	"github.com/sazzer/newlanding/service/internal/response"
+	"github.com/sazzer/newlanding/service/internal/response/hal"
 )
 
 func (r Routes) index(c echo.Context) error {
-	return c.String(http.StatusOK, "Hello, World!")
+	model := Model{}
+	model.WithLink("self", hal.Link{Href: "/"})
+
+	return response.New(model).Send(c)
 }

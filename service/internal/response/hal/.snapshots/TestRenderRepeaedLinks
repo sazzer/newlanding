@@ -1,0 +1,15 @@
+{
+  "_links": {
+    "item": [
+      {
+        "href": "/item/1"
+      },
+      {
+        "href": "/item/2"
+      },
+      {
+        "href": "/item/3"
+      }
+    ]
+  }
+}
