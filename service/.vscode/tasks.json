@@ -3,10 +3,33 @@
 	"tasks": [
 		{
 			"type": "shell",
-			"command": "go run ./cmd/newlanding/...",
+			"command": "taskctl start",
 			"group": "build",
 			"problemMatcher": ["$go"],
-			"label": "go: run"
+			"label": "taskctl: start",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared",
+				"showReuseMessage": true,
+				"clear": true
+			}
+		},
+		{
+			"type": "shell",
+			"command": "taskctl test",
+			"group": "test",
+			"problemMatcher": ["$go"],
+			"label": "taskctl: test",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "shared",
+				"showReuseMessage": true,
+				"clear": true
+			}
 		}
 	]
 }

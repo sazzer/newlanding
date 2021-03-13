@@ -21,6 +21,8 @@ type Full struct {
 }
 
 func TestRenderEmptyModel(t *testing.T) {
+	t.Parallel()
+
 	model := Empty{}
 
 	rendered, err := json.MarshalIndent(model, "", "  ")
@@ -30,6 +32,8 @@ func TestRenderEmptyModel(t *testing.T) {
 }
 
 func TestRenderSingleLink(t *testing.T) {
+	t.Parallel()
+
 	model := Empty{}
 	model.WithLink("self", hal.NewLink("/"))
 
@@ -40,6 +44,8 @@ func TestRenderSingleLink(t *testing.T) {
 }
 
 func TestRenderRepeaedLinks(t *testing.T) {
+	t.Parallel()
+
 	model := Empty{}
 	model.WithLink("item", hal.NewLink("/item/1"))
 	model.WithLink("item", hal.NewLink("/item/2"))
@@ -52,6 +58,8 @@ func TestRenderRepeaedLinks(t *testing.T) {
 }
 
 func TestRenderMixedLinks(t *testing.T) {
+	t.Parallel()
+
 	model := Empty{}
 	model.WithLink("item", hal.NewLink("/item/1"))
 	model.WithLink("item", hal.NewLink("/item/2"))
@@ -64,6 +72,8 @@ func TestRenderMixedLinks(t *testing.T) {
 }
 
 func TestRenderNamedLinks(t *testing.T) {
+	t.Parallel()
+
 	model := Empty{}
 	model.WithLink("item", hal.NewNamedLink("/item/1", "one"))
 	model.WithLink("item", hal.NewNamedLink("/item/2", "two"))
@@ -76,6 +86,8 @@ func TestRenderNamedLinks(t *testing.T) {
 }
 
 func TestRenderWithData(t *testing.T) {
+	t.Parallel()
+
 	model := Full{
 		Name:    "Graham",
 		Age:     38,

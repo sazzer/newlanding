@@ -24,6 +24,7 @@ func (d *Document) WithLink(rel string, link Link) *Document {
 	} else {
 		d.Links[rel] = link
 	}
+
 	return d
 }
 
