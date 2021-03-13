@@ -14,12 +14,12 @@ type Service struct {
 func New(cfg Config) Service {
 	log.Info().Msg("Building New Landing")
 
-	server := server.New(cfg.Port)
+	server := server.New(cfg.Port, []server.RoutesContributor{})
 
 	log.Info().Msg("Built New Landing")
 
 	return Service{
-		server: server,
+		server: server.Server,
 	}
 }
 

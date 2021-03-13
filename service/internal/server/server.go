@@ -8,6 +8,12 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
+// Interface that components can implement if they are able to contribute routes to the server.
+type RoutesContributor interface {
+	// Contribute some routes to the HTTP Server.
+	ContributeRoutes(e *echo.Echo)
+}
+
 // Wrapper around the HTTP server.
 type Server struct {
 	port   uint16
@@ -15,7 +21,7 @@ type Server struct {
 }
 
 // Create a new instance of the HTTP server.
-func New(port uint16) Server {
+func newServer(port uint16, routes []RoutesContributor) Server {
 	e := echo.New()
 
 	e.Use(middleware.RequestID())
@@ -27,6 +33,10 @@ func New(port uint16) Server {
 	}))
 	e.Use(middleware.Decompress())
 	e.Use(middleware.Gzip())
+
+	for _, r := range routes {
+		r.ContributeRoutes(e)
+	}
 
 	return Server{
 		port:   port,
