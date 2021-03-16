@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"github.com/lestrrat-go/jwx/jwk"
+	"github.com/rs/zerolog/log"
 )
 
 // ErrFetchKeys is an error returned when fetching of JWK Keys fails.
@@ -33,6 +34,8 @@ func NewKeyset(domain Domain) Keyset {
 func (k Keyset) FetchKeys(ctx context.Context) (jwk.Set, error) {
 	set, err := k.keys.Fetch(ctx, k.url)
 	if err != nil {
+		log.Warn().Err(err).Msg("Failed to fetch JWK keys")
+
 		return nil, ErrFetchKeys
 	}
 
