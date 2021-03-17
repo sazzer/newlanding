@@ -42,15 +42,16 @@ func generateKey(t *testing.T) (jwk.Key, jwk.Key, jwk.Set) {
 	return private, public, set
 }
 
+// nolint:unparam
 func generateToken(t *testing.T, privateKey jwk.Key, issuer, subject, audience string, issued, expired time.Time) (jwt.Token, string) {
 	t.Helper()
 
 	token := jwt.New()
-	token.Set(jwt.IssuerKey, issuer)
-	token.Set(jwt.SubjectKey, subject)
-	token.Set(jwt.AudienceKey, []string{audience})
-	token.Set(jwt.ExpirationKey, expired)
-	token.Set(jwt.IssuedAtKey, issued)
+	assert.NoError(t, token.Set(jwt.IssuerKey, issuer))
+	assert.NoError(t, token.Set(jwt.SubjectKey, subject))
+	assert.NoError(t, token.Set(jwt.AudienceKey, []string{audience}))
+	assert.NoError(t, token.Set(jwt.ExpirationKey, expired))
+	assert.NoError(t, token.Set(jwt.IssuedAtKey, issued))
 
 	signed, err := jwt.Sign(token, jwa.RS256, privateKey)
 	assert.NoError(t, err)
