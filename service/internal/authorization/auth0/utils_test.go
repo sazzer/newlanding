@@ -3,7 +3,6 @@ package auth0_test
 import (
 	"crypto/rand"
 	"crypto/rsa"
-	"encoding/json"
 	"testing"
 	"time"
 
@@ -34,11 +33,6 @@ func generateKey(t *testing.T) (jwk.Key, jwk.Key, jwk.Set) {
 	set := jwk.NewSet()
 	set.Add(public)
 
-	marshalled, err := json.Marshal(set)
-	assert.NoError(t, err)
-
-	t.Logf("Generated key set: %s", marshalled)
-
 	return private, public, set
 }
 
@@ -55,8 +49,6 @@ func generateToken(t *testing.T, privateKey jwk.Key, issuer, subject, audience s
 
 	signed, err := jwt.Sign(token, jwa.RS256, privateKey)
 	assert.NoError(t, err)
-
-	t.Logf("Generated token: %s", signed)
 
 	return token, string(signed)
 }
