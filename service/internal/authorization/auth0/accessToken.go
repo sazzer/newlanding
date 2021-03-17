@@ -6,7 +6,7 @@ import (
 
 	"github.com/lestrrat-go/jwx/jwt"
 	"github.com/rs/zerolog/log"
-	"github.com/sazzer/newlanding/service/internal/users"
+	"github.com/sazzer/newlanding/service/internal/authorization"
 )
 
 var ErrParseToken = errors.New("failed to parse access token")
@@ -30,28 +30,28 @@ func NewAccessTokenParser(domain Domain, audience string) AccessTokenParser {
 }
 
 // Attempt to parse the provided access token into a security context.
-func (a AccessTokenParser) ParseAccessToken(ctx context.Context, token string) (users.SecurityContext, error) {
+func (a AccessTokenParser) ParseAccessToken(ctx context.Context, token string) (authorization.SecurityContext, error) {
 	keyset, err := a.keys.FetchKeys(ctx)
 	if err != nil {
-		return users.SecurityContext{}, ErrFetchKeys
+		return authorization.SecurityContext{}, ErrFetchKeys
 	}
 
 	parsed, err := jwt.ParseString(token, jwt.WithKeySet(keyset))
 	if err != nil {
 		log.Warn().Err(err).Str("token", token).Msg("Failed to parse access token")
 
-		return users.SecurityContext{}, ErrParseToken
+		return authorization.SecurityContext{}, ErrParseToken
 	}
 
 	err = jwt.Validate(parsed, jwt.WithAudience(a.audience), jwt.WithIssuer(a.issuer))
 	if err != nil {
 		log.Warn().Err(err).Str("token", token).Msg("Failed to validate access token")
 
-		return users.SecurityContext{}, ErrParseToken
+		return authorization.SecurityContext{}, ErrParseToken
 	}
 
-	return users.SecurityContext{
-		User:      users.ID(parsed.Subject()),
+	return authorization.SecurityContext{
+		Principal: authorization.Principal(parsed.Subject()),
 		IssuedAt:  parsed.IssuedAt().UTC(),
 		ExpiresAt: parsed.Expiration().UTC(),
 	}, nil

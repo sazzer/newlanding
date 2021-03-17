@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/sazzer/newlanding/service/internal/users/auth0"
+	"github.com/sazzer/newlanding/service/internal/authorization/auth0"
 	"github.com/stretchr/testify/assert"
 	"gopkg.in/h2non/gock.v1"
 )

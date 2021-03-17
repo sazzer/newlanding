@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/lestrrat-go/jwx/jwk"
-	"github.com/sazzer/newlanding/service/internal/users"
-	"github.com/sazzer/newlanding/service/internal/users/auth0"
+	"github.com/sazzer/newlanding/service/internal/authorization"
+	"github.com/sazzer/newlanding/service/internal/authorization/auth0"
 	"github.com/stretchr/testify/assert"
 	"gopkg.in/h2non/gock.v1"
 )
@@ -33,7 +33,7 @@ func TestParseValidToken(t *testing.T) {
 	securityContext, err := sut.ParseAccessToken(context.Background(), signed)
 	assert.NoError(t, err)
 
-	assert.Equal(t, users.ID("google-oauth2|116440097717692497264"), securityContext.User)
+	assert.Equal(t, authorization.Principal("google-oauth2|116440097717692497264"), securityContext.Principal)
 	assert.Equal(t, issued, securityContext.IssuedAt)
 	assert.Equal(t, expires, securityContext.ExpiresAt)
 
