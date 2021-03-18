@@ -1,4 +1,4 @@
-package home
+package service
 
 import (
 	"github.com/sazzer/newlanding/service/internal/home/http"
@@ -6,15 +6,15 @@ import (
 )
 
 // Component for the home document.
-type Component struct {
+type HomeComponent struct {
 	Routes server.RoutesContributor
 }
 
 // Create a new home document component.
-func New() Component {
+func NewHomeComponent() HomeComponent {
 	routes := http.Routes{}
 
-	return Component{
+	return HomeComponent{
 		Routes: routes,
 	}
 }

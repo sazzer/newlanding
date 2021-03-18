@@ -2,7 +2,6 @@ package service
 
 import (
 	"github.com/rs/zerolog/log"
-	"github.com/sazzer/newlanding/service/internal/home"
 	"github.com/sazzer/newlanding/service/internal/server"
 )
 
@@ -15,9 +14,10 @@ type Service struct {
 func New(cfg Config) Service {
 	log.Info().Msg("Building New Landing")
 
-	home := home.New()
+	_ = NewAuthorizationComponent()
+	home := NewHomeComponent()
 
-	server := server.New(cfg.Port, []server.RoutesContributor{
+	server := NewServerComponent(cfg.Port, []server.RoutesContributor{
 		home.Routes,
 	})
 

@@ -21,7 +21,7 @@ type Server struct {
 }
 
 // Create a new instance of the HTTP server.
-func newServer(port uint16, routes []RoutesContributor) Server {
+func New(port uint16, routes []RoutesContributor) Server {
 	e := echo.New()
 
 	e.Use(middleware.RequestID())
