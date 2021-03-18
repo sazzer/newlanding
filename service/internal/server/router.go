@@ -13,8 +13,18 @@ type Context struct {
 // Local Handler function to handle incoming requests.
 type HandlerFunc func(c Context) response.Response
 
+// Wrapper around the Echo server to add routes.
+type Router struct {
+	e *echo.Echo
+}
+
+// Add a new route to the server.
+func (r *Router) Route(method, url string, handler HandlerFunc) {
+	r.e.Add(method, url, wrapHandler(handler))
+}
+
 // Wrap a handler function to make it work with the Echo handler function.
-func WrapHandler(handler HandlerFunc) echo.HandlerFunc {
+func wrapHandler(handler HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		context := Context{
 			Context: c,

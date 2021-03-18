@@ -11,7 +11,7 @@ import (
 // Interface that components can implement if they are able to contribute routes to the server.
 type RoutesContributor interface {
 	// Contribute some routes to the HTTP Server.
-	ContributeRoutes(e *echo.Echo)
+	ContributeRoutes(r *Router)
 }
 
 // Wrapper around the HTTP server.
@@ -34,8 +34,10 @@ func newServer(port uint16, routes []RoutesContributor) Server {
 	e.Use(middleware.Decompress())
 	e.Use(middleware.Gzip())
 
+	router := Router{e}
+
 	for _, r := range routes {
-		r.ContributeRoutes(e)
+		r.ContributeRoutes(&router)
 	}
 
 	return Server{

@@ -1,7 +1,8 @@
 package http
 
 import (
-	"github.com/labstack/echo/v4"
+	"net/http"
+
 	"github.com/sazzer/newlanding/service/internal/server"
 )
 
@@ -9,6 +10,6 @@ import (
 type Routes struct{}
 
 // Contribute the required HTTP routes for the home document.
-func (r Routes) ContributeRoutes(e *echo.Echo) {
-	e.GET("/", server.WrapHandler(r.index))
+func (r Routes) ContributeRoutes(router *server.Router) {
+	router.Route(http.MethodGet, "/", r.index)
 }
