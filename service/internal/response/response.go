@@ -13,8 +13,8 @@ type Response struct {
 	body interface{}
 	// The status code for the HTTP response.
 	status int
-	// Any headers to include in the HTTP response.
-	headers map[string]string
+	// The content type for the HTTP response.
+	contentType string
 }
 
 // Interface that can be implemented by the response data to indicate it's status code.
@@ -33,31 +33,35 @@ type WithContentType interface {
 // If this payload happens to also implement the WithStatusCode or WithContentType interfaces
 // then these will be taken into account, otherwise the defaults will be used.
 func New(body interface{}) Response {
-	statusCode := http.StatusOK
+	response := Response{
+		body:        body,
+		status:      http.StatusOK,
+		contentType: "application/json",
+	}
+
 	if wsc, ok := body.(WithStatusCode); ok {
-		statusCode = wsc.StatusCode()
+		response.status = wsc.StatusCode()
 	}
 
-	headers := map[string]string{}
 	if wct, ok := body.(WithContentType); ok {
-		headers["content-type"] = wct.ContentType()
+		response.contentType = wct.ContentType()
 	}
 
-	return Response{
-		body:    body,
-		status:  statusCode,
-		headers: headers,
-	}
+	return response
 }
 
 // Actually send the response to the client.
 func (res Response) Send(w http.ResponseWriter, req *http.Request) {
-	for name, value := range res.headers {
-		w.Header().Set(name, value)
+	j := render.JSON{
+		Head: render.Head{
+			ContentType: res.contentType,
+			Status:      res.status,
+		},
+		Indent: true,
 	}
 
 	renderer := render.New()
-	if err := renderer.JSON(w, res.status, res.body); err != nil {
+	if err := renderer.Render(w, j, res.body); err != nil {
 		log.Error().Err(err).Msg("Failed to send response")
 	}
 }

@@ -7,6 +7,8 @@ import (
 
 	"github.com/rs/zerolog/log"
 	"github.com/sazzer/newlanding/service/internal/authorization"
+	"github.com/sazzer/newlanding/service/internal/response"
+	"github.com/sazzer/newlanding/service/internal/response/problem"
 )
 
 // Unexported type to represent the key for the security landing in the context.
@@ -32,7 +34,7 @@ func authorizerMiddleware(authorizer authorization.Authorizer) func(http.Handler
 			if !strings.HasPrefix(header, "Bearer ") {
 				log.Warn().Str("header", header).Msg("Authorization header is not a bearer token")
 
-				// TODO: Send error response
+				response.New(problem.Unauthorized()).Send(w, r)
 				return
 			}
 
@@ -42,7 +44,7 @@ func authorizerMiddleware(authorizer authorization.Authorizer) func(http.Handler
 			if err != nil {
 				log.Warn().Str("header", header).Err(err).Msg("Unable to parse access token")
 
-				// TODO: Send error response
+				response.New(problem.Unauthorized()).Send(w, r)
 				return
 			}
 
