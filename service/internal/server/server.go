@@ -2,9 +2,11 @@ package server
 
 import (
 	"fmt"
+	"net/http"
 
-	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
+	"github.com/go-chi/cors"
 	"github.com/rs/zerolog/log"
 	"github.com/sazzer/newlanding/service/internal/authorization"
 )
@@ -18,33 +20,34 @@ type RoutesContributor interface {
 // Wrapper around the HTTP server.
 type Server struct {
 	port   uint16
-	server *echo.Echo
+	server *chi.Mux
 }
 
 // Create a new instance of the HTTP server.
 func New(port uint16, authorizer authorization.Authorizer, routes []RoutesContributor) Server {
-	e := echo.New()
+	r := chi.NewRouter()
 
-	e.Use(middleware.RequestID())
-	e.Pre(middleware.RemoveTrailingSlash())
-	e.Use(middleware.Logger())
-	e.Use(middleware.Recover())
-	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+	r.Use(middleware.RequestID)
+	r.Use(middleware.RealIP)
+	r.Use(middleware.Logger)
+	r.Use(middleware.Recoverer)
+	r.Use(middleware.Compress(5))
+	r.Use(middleware.CleanPath)
+	r.Use(middleware.StripSlashes)
+	r.Use(cors.Handler(cors.Options{
 		AllowCredentials: true,
 	}))
-	e.Use(middleware.Decompress())
-	e.Use(middleware.Gzip())
-	e.Use(authorizerMiddleware(authorizer))
+	r.Use(authorizerMiddleware(authorizer))
 
-	router := Router{e}
+	router := NewRouter(r)
 
-	for _, r := range routes {
-		r.ContributeRoutes(&router)
+	for _, route := range routes {
+		route.ContributeRoutes(&router)
 	}
 
 	return Server{
 		port:   port,
-		server: e,
+		server: r,
 	}
 }
 
@@ -54,7 +57,7 @@ func (s Server) Start() {
 
 	log.Info().Str("address", address).Msg("Starting HTTP Server")
 
-	if err := s.server.Start(address); err != nil {
+	if err := http.ListenAndServe(address, s.server); err != nil {
 		log.Fatal().Err(err).Msg("Failed to start HTTP server")
 	}
 }

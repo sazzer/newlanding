@@ -3,7 +3,8 @@ package response
 import (
 	"net/http"
 
-	"github.com/labstack/echo/v4"
+	"github.com/rs/zerolog/log"
+	"github.com/unrolled/render"
 )
 
 // Representation of the response to an HTTP Request.
@@ -50,10 +51,13 @@ func New(body interface{}) Response {
 }
 
 // Actually send the response to the client.
-func (r Response) Send(c echo.Context) error {
-	for name, value := range r.headers {
-		c.Response().Header().Set(name, value)
+func (res Response) Send(w http.ResponseWriter, req *http.Request) {
+	for name, value := range res.headers {
+		w.Header().Set(name, value)
 	}
 
-	return c.JSON(r.status, r.body)
+	renderer := render.New()
+	if err := renderer.JSON(w, res.status, res.body); err != nil {
+		log.Error().Err(err).Msg("Failed to send response")
+	}
 }

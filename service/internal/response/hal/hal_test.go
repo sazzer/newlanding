@@ -47,9 +47,9 @@ func TestRenderRepeaedLinks(t *testing.T) {
 	t.Parallel()
 
 	model := Empty{}
-	model.WithLink("item", hal.NewLink("/item/1"))
-	model.WithLink("item", hal.NewLink("/item/2"))
-	model.WithLink("item", hal.NewLink("/item/3"))
+	model.WithLink("item", hal.NewTemplateLink("/item/{id}", map[string]interface{}{"id": 1}))
+	model.WithLink("item", hal.NewTemplateLink("/item/{id}", map[string]interface{}{"id": 2}))
+	model.WithLink("item", hal.NewTemplateLink("/item/{id}", map[string]interface{}{"id": 3}))
 
 	rendered, err := json.MarshalIndent(model, "", "  ")
 	assert.NoError(t, err)
@@ -75,9 +75,9 @@ func TestRenderNamedLinks(t *testing.T) {
 	t.Parallel()
 
 	model := Empty{}
-	model.WithLink("item", hal.NewNamedLink("/item/1", "one"))
-	model.WithLink("item", hal.NewNamedLink("/item/2", "two"))
-	model.WithLink("item", hal.NewNamedLink("/item/3", "three"))
+	model.WithLink("item", hal.NewNamedTemplateLink("one", "/item/{id}", map[string]interface{}{"id": 1}))
+	model.WithLink("item", hal.NewNamedTemplateLink("two", "/item/{id}", map[string]interface{}{"id": 2}))
+	model.WithLink("item", hal.NewNamedTemplateLink("three", "/item/{id}", map[string]interface{}{"id": 3}))
 
 	rendered, err := json.MarshalIndent(model, "", "  ")
 	assert.NoError(t, err)
@@ -93,9 +93,9 @@ func TestRenderWithData(t *testing.T) {
 		Age:     38,
 		Colours: []string{"red", "green", "blue"},
 	}
-	model.WithLink("colour", hal.NewNamedLink("/colours/red", "red"))
-	model.WithLink("colour", hal.NewNamedLink("/colours/green", "green"))
-	model.WithLink("colour", hal.NewNamedLink("/colours/blue", "blue"))
+	model.WithLink("colour", hal.NewNamedLink("red", "/colours/red"))
+	model.WithLink("colour", hal.NewNamedLink("green", "/colours/green"))
+	model.WithLink("colour", hal.NewNamedLink("blue", "/colours/blue"))
 	model.WithLink("self", hal.NewLink("/"))
 
 	rendered, err := json.MarshalIndent(model, "", "  ")

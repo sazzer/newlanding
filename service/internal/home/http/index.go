@@ -12,7 +12,11 @@ func (r Routes) index(c server.Context) response.Response {
 		Name:    "newlanding",
 		Version: "0.1.0",
 	}
-	model.WithLink("self", hal.Link{Href: "/"})
+	model.WithLink("self", hal.NewLink("/"))
+
+	if c.SecurityContext != nil {
+		model.WithLink("user", c.SecurityContext.Principal.ToLink())
+	}
 
 	return response.New(model)
 }
