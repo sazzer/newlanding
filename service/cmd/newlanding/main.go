@@ -22,6 +22,10 @@ func main() {
 
 	service := service.New(service.Config{
 		Port: c.Port,
+		Auth0: service.Auth0Config{
+			Domain:   c.Auth0Domain,
+			Audience: c.Auth0Audience,
+		},
 	})
 
 	service.Start()

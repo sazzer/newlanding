@@ -19,7 +19,7 @@ type AccessTokenParser struct {
 }
 
 // Create a new Access Token Parser to parse tokens for the given domain.
-func NewAccessTokenParser(domain Domain, audience string) AccessTokenParser {
+func NewAccessTokenParser(domain Domain, audience string) authorization.Authorizer {
 	keys := NewKeyset(domain)
 
 	return AccessTokenParser{
