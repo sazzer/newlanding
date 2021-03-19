@@ -6,15 +6,15 @@ import (
 )
 
 // Component for authorization.
-type AuthorizationComponent struct {
+type authorizationComponent struct {
 	Authorizer authorization.Authorizer
 }
 
 // Create a new instance of the authorization component.
-func NewAuthorizationComponent(domain, audience string) AuthorizationComponent {
+func newAuthorizationComponent(domain, audience string) authorizationComponent {
 	authorizer := auth0.NewAccessTokenParser(auth0.Domain(domain), audience)
 
-	return AuthorizationComponent{
+	return authorizationComponent{
 		Authorizer: authorizer,
 	}
 }

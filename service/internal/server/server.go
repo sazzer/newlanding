@@ -6,6 +6,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/rs/zerolog/log"
+	"github.com/sazzer/newlanding/service/internal/authorization"
 )
 
 // Interface that components can implement if they are able to contribute routes to the server.
@@ -21,7 +22,7 @@ type Server struct {
 }
 
 // Create a new instance of the HTTP server.
-func New(port uint16, routes []RoutesContributor) Server {
+func New(port uint16, authorizer authorization.Authorizer, routes []RoutesContributor) Server {
 	e := echo.New()
 
 	e.Use(middleware.RequestID())
@@ -33,6 +34,7 @@ func New(port uint16, routes []RoutesContributor) Server {
 	}))
 	e.Use(middleware.Decompress())
 	e.Use(middleware.Gzip())
+	e.Use(authorizerMiddleware(authorizer))
 
 	router := Router{e}
 

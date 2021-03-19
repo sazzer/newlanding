@@ -14,10 +14,10 @@ type Service struct {
 func New(cfg Config) Service {
 	log.Info().Msg("Building New Landing")
 
-	_ = NewAuthorizationComponent(cfg.Auth0.Domain, cfg.Auth0.Audience)
-	home := NewHomeComponent()
+	authorization := newAuthorizationComponent(cfg.Auth0.Domain, cfg.Auth0.Audience)
+	home := newHomeComponent()
 
-	server := NewServerComponent(cfg.Port, []server.RoutesContributor{
+	server := newServerComponent(cfg.Port, authorization, []server.RoutesContributor{
 		home.Routes,
 	})
 

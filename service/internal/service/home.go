@@ -6,15 +6,15 @@ import (
 )
 
 // Component for the home document.
-type HomeComponent struct {
+type homeComponent struct {
 	Routes server.RoutesContributor
 }
 
 // Create a new home document component.
-func NewHomeComponent() HomeComponent {
+func newHomeComponent() homeComponent {
 	routes := http.Routes{}
 
-	return HomeComponent{
+	return homeComponent{
 		Routes: routes,
 	}
 }
