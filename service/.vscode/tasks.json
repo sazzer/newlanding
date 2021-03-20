@@ -6,7 +6,30 @@
 			"command": "cargo run",
 			"group": "build",
 			"problemMatcher": ["$rustc"],
-			"label": "cargo: run"
+			"label": "cargo: run",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared",
+				"showReuseMessage": true,
+				"clear": true
+			}
+		}, 
+		{
+			"type": "shell",
+			"command": "cargo test",
+			"group": "test",
+			"problemMatcher": ["$rustc"],
+			"label": "cargo: test",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": true,
+				"panel": "shared",
+				"showReuseMessage": true,
+				"clear": true
+			}
 		}
 	]
 }

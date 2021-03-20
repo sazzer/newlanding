@@ -23,10 +23,12 @@ impl Service {
 
         let prometheus = Registry::new();
 
+        let _authentication =
+            crate::authorization::component::new(&cfg.auth0_domain, &cfg.auth0_audience);
         let users = crate::users::component::new(
-            cfg.auth0_domain,
-            cfg.auth0_client_id,
-            cfg.auth0_client_secret,
+            &cfg.auth0_domain,
+            &cfg.auth0_client_id,
+            &cfg.auth0_client_secret,
         );
         let home = crate::home::component::new().build();
 

@@ -1,5 +1,7 @@
-use super::auth0::{ClientId, ClientSecret, Domain};
-use super::{auth0::UserRepository, GetUserUseCase};
+use super::{
+    auth0::{ClientId, ClientSecret, Domain, UserRepository},
+    GetUserUseCase,
+};
 use crate::server::RouteConfigurer;
 use actix_web::web::ServiceConfig;
 use std::sync::Arc;
