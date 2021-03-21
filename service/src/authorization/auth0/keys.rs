@@ -113,6 +113,15 @@ mod tests {
     use biscuit::jwa;
     use mockito::mock;
 
+    fn load_keys(kid: &str) -> JWK<()> {
+        let jwk_contents = std::fs::read_to_string("./keys/public_key.jwk").unwrap();
+        let mut jwk: JWK<()> = serde_json::from_str(&jwk_contents).unwrap();
+
+        jwk.common.key_id = Some(kid.to_owned());
+
+        jwk
+    }
+
     #[actix_rt::test]
     async fn get_key_success() {
         let _ = env_logger::try_init();
@@ -120,22 +129,12 @@ mod tests {
         let m = mock("GET", "/.well-known/jwks.json")
             .with_status(200)
             .with_header("content-type", "application/json")
-            .with_body(r#"{
-              "keys": [
-                  {
-                      "alg": "RS256",
-                      "e": "AQAB",
-                      "kid": "myKeyId",
-                      "kty": "RSA",
-                      "n": "uNaM8aXf0OJSmjc1iBvJEKdB9LFNn-UfZI7mZURSDhCFNxNb8jwP7z6d_DsAbEfNbE4yQ3eZ86qT6speuVB2n5wGqXA0-rKEgYTEA_2isE88EwFoo04_284dvRbpSpeWmIn45_vM-RQKZE_tBqkm00k6eGO_llW5knLMiXcQ_AhNfdHiNcszY3rI_Xc-6uJFvwXnxy61AZbRp8gvvWzkNpnbzeCu40EnNMp6FpAIREdyQkrKaMPfS1Mlg_S0QhhUiT7NionT-nzbl5d2hlsO5_33S838NL5_T7Ts6-3viH0WLIJKAyC6KoF5zxONuztIetyZ_JkErflPAQOtm5TcCQ",
-                      "use": "sig",
-                      "x5c": [
-                          "MIIDETCCAfmgAwIBAgIJJtgqNutHq0anMA0GCSqGSIb3DQEBCwUAMCYxJDAiBgNVBAMTG2Rldi1uZXdsYW5kaW5nLmV1LmF1dGgwLmNvbTAeFw0yMTAzMDYxMTIxMThaFw0zNDExMTMxMTIxMThaMCYxJDAiBgNVBAMTG2Rldi1uZXdsYW5kaW5nLmV1LmF1dGgwLmNvbTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBALjWjPGl39DiUpo3NYgbyRCnQfSxTZ/lH2SO5mVEUg4QhTcTW/I8D+8+nfw7AGxHzWxOMkN3mfOqk+rKXrlQdp+cBqlwNPqyhIGExAP9orBPPBMBaKNOP9vOHb0W6UqXlpiJ+Of7zPkUCmRP7QapJtNJOnhjv5ZVuZJyzIl3EPwITX3R4jXLM2N6yP13PuriRb8F58cutQGW0afIL71s5DaZ283gruNBJzTKehaQCERHckJKymjD30tTJYP0tEIYVIk+zYqJ0/p825eXdoZbDuf990vN/DS+f0+07Ovt74h9FiyCSgMguiqBec8Tjbs7SHrcmfyZBK35TwEDrZuU3AkCAwEAAaNCMEAwDwYDVR0TAQH/BAUwAwEB/zAdBgNVHQ4EFgQUduuktYhD46z4ToVvLoqrjrusadEwDgYDVR0PAQH/BAQDAgKEMA0GCSqGSIb3DQEBCwUAA4IBAQAQkI/lwZuKLCzMv5oxPo7KzIgNQOdQrMGjrN/vnVMmdpFnN3cgF4hpTgEbCfnjMUGfGujVqJ69ZEG4/sL7bSJD2YOkvS982KTfFG8TsWwEXRBeInES7FiXkm/bbs4tX5JCAFBHCtfaSCHSK93cg+at/SPDjDFiONFH17UyJmIQi2e3S2tUYTK6/scZzNIy2T5ZcMjBC3VExojQduJaN+Y5YMClTuxIofOSrduyMT7bNwBaHvC3B4f6s/2yUvRd+50BCEixbC1etxZ3ordwbBAAs8yxETbpVEsYJVTSwoCQz6i8dlZ0HQmurJh9ezTrWdmkl/WZPLDWwSKJ1eC7aRct"
-                      ],
-                      "x5t": "ceXBgISC99AL6JII5KhC__fuEP4"
-                  }
-              ]
-          }"#)
+            .with_body(
+                serde_json::to_string(&JWKSet {
+                    keys: vec![load_keys("myKeyId")],
+                })
+                .unwrap(),
+            )
             .create();
 
         let sut = Keys::new(Domain::new(mockito::server_url()));
@@ -197,22 +196,12 @@ mod tests {
         let m = mock("GET", "/.well-known/jwks.json")
             .with_status(200)
             .with_header("content-type", "application/json")
-            .with_body(r#"{
-              "keys": [
-                  {
-                      "alg": "RS256",
-                      "e": "AQAB",
-                      "kid": "myKeyId",
-                      "kty": "RSA",
-                      "n": "uNaM8aXf0OJSmjc1iBvJEKdB9LFNn-UfZI7mZURSDhCFNxNb8jwP7z6d_DsAbEfNbE4yQ3eZ86qT6speuVB2n5wGqXA0-rKEgYTEA_2isE88EwFoo04_284dvRbpSpeWmIn45_vM-RQKZE_tBqkm00k6eGO_llW5knLMiXcQ_AhNfdHiNcszY3rI_Xc-6uJFvwXnxy61AZbRp8gvvWzkNpnbzeCu40EnNMp6FpAIREdyQkrKaMPfS1Mlg_S0QhhUiT7NionT-nzbl5d2hlsO5_33S838NL5_T7Ts6-3viH0WLIJKAyC6KoF5zxONuztIetyZ_JkErflPAQOtm5TcCQ",
-                      "use": "sig",
-                      "x5c": [
-                          "MIIDETCCAfmgAwIBAgIJJtgqNutHq0anMA0GCSqGSIb3DQEBCwUAMCYxJDAiBgNVBAMTG2Rldi1uZXdsYW5kaW5nLmV1LmF1dGgwLmNvbTAeFw0yMTAzMDYxMTIxMThaFw0zNDExMTMxMTIxMThaMCYxJDAiBgNVBAMTG2Rldi1uZXdsYW5kaW5nLmV1LmF1dGgwLmNvbTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBALjWjPGl39DiUpo3NYgbyRCnQfSxTZ/lH2SO5mVEUg4QhTcTW/I8D+8+nfw7AGxHzWxOMkN3mfOqk+rKXrlQdp+cBqlwNPqyhIGExAP9orBPPBMBaKNOP9vOHb0W6UqXlpiJ+Of7zPkUCmRP7QapJtNJOnhjv5ZVuZJyzIl3EPwITX3R4jXLM2N6yP13PuriRb8F58cutQGW0afIL71s5DaZ283gruNBJzTKehaQCERHckJKymjD30tTJYP0tEIYVIk+zYqJ0/p825eXdoZbDuf990vN/DS+f0+07Ovt74h9FiyCSgMguiqBec8Tjbs7SHrcmfyZBK35TwEDrZuU3AkCAwEAAaNCMEAwDwYDVR0TAQH/BAUwAwEB/zAdBgNVHQ4EFgQUduuktYhD46z4ToVvLoqrjrusadEwDgYDVR0PAQH/BAQDAgKEMA0GCSqGSIb3DQEBCwUAA4IBAQAQkI/lwZuKLCzMv5oxPo7KzIgNQOdQrMGjrN/vnVMmdpFnN3cgF4hpTgEbCfnjMUGfGujVqJ69ZEG4/sL7bSJD2YOkvS982KTfFG8TsWwEXRBeInES7FiXkm/bbs4tX5JCAFBHCtfaSCHSK93cg+at/SPDjDFiONFH17UyJmIQi2e3S2tUYTK6/scZzNIy2T5ZcMjBC3VExojQduJaN+Y5YMClTuxIofOSrduyMT7bNwBaHvC3B4f6s/2yUvRd+50BCEixbC1etxZ3ordwbBAAs8yxETbpVEsYJVTSwoCQz6i8dlZ0HQmurJh9ezTrWdmkl/WZPLDWwSKJ1eC7aRct"
-                      ],
-                      "x5t": "ceXBgISC99AL6JII5KhC__fuEP4"
-                  }
-              ]
-          }"#)
+            .with_body(
+                serde_json::to_string(&JWKSet {
+                    keys: vec![load_keys("myKeyId")],
+                })
+                .unwrap(),
+            )
             .create();
 
         let sut = Keys::new(Domain::new(mockito::server_url()));
@@ -235,44 +224,24 @@ mod tests {
         let m1 = mock("GET", "/.well-known/jwks.json")
             .with_status(200)
             .with_header("content-type", "application/json")
-            .with_body(r#"{
-              "keys": [
-                  {
-                      "alg": "RS256",
-                      "e": "AQAB",
-                      "kid": "myKeyId1",
-                      "kty": "RSA",
-                      "n": "uNaM8aXf0OJSmjc1iBvJEKdB9LFNn-UfZI7mZURSDhCFNxNb8jwP7z6d_DsAbEfNbE4yQ3eZ86qT6speuVB2n5wGqXA0-rKEgYTEA_2isE88EwFoo04_284dvRbpSpeWmIn45_vM-RQKZE_tBqkm00k6eGO_llW5knLMiXcQ_AhNfdHiNcszY3rI_Xc-6uJFvwXnxy61AZbRp8gvvWzkNpnbzeCu40EnNMp6FpAIREdyQkrKaMPfS1Mlg_S0QhhUiT7NionT-nzbl5d2hlsO5_33S838NL5_T7Ts6-3viH0WLIJKAyC6KoF5zxONuztIetyZ_JkErflPAQOtm5TcCQ",
-                      "use": "sig",
-                      "x5c": [
-                          "MIIDETCCAfmgAwIBAgIJJtgqNutHq0anMA0GCSqGSIb3DQEBCwUAMCYxJDAiBgNVBAMTG2Rldi1uZXdsYW5kaW5nLmV1LmF1dGgwLmNvbTAeFw0yMTAzMDYxMTIxMThaFw0zNDExMTMxMTIxMThaMCYxJDAiBgNVBAMTG2Rldi1uZXdsYW5kaW5nLmV1LmF1dGgwLmNvbTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBALjWjPGl39DiUpo3NYgbyRCnQfSxTZ/lH2SO5mVEUg4QhTcTW/I8D+8+nfw7AGxHzWxOMkN3mfOqk+rKXrlQdp+cBqlwNPqyhIGExAP9orBPPBMBaKNOP9vOHb0W6UqXlpiJ+Of7zPkUCmRP7QapJtNJOnhjv5ZVuZJyzIl3EPwITX3R4jXLM2N6yP13PuriRb8F58cutQGW0afIL71s5DaZ283gruNBJzTKehaQCERHckJKymjD30tTJYP0tEIYVIk+zYqJ0/p825eXdoZbDuf990vN/DS+f0+07Ovt74h9FiyCSgMguiqBec8Tjbs7SHrcmfyZBK35TwEDrZuU3AkCAwEAAaNCMEAwDwYDVR0TAQH/BAUwAwEB/zAdBgNVHQ4EFgQUduuktYhD46z4ToVvLoqrjrusadEwDgYDVR0PAQH/BAQDAgKEMA0GCSqGSIb3DQEBCwUAA4IBAQAQkI/lwZuKLCzMv5oxPo7KzIgNQOdQrMGjrN/vnVMmdpFnN3cgF4hpTgEbCfnjMUGfGujVqJ69ZEG4/sL7bSJD2YOkvS982KTfFG8TsWwEXRBeInES7FiXkm/bbs4tX5JCAFBHCtfaSCHSK93cg+at/SPDjDFiONFH17UyJmIQi2e3S2tUYTK6/scZzNIy2T5ZcMjBC3VExojQduJaN+Y5YMClTuxIofOSrduyMT7bNwBaHvC3B4f6s/2yUvRd+50BCEixbC1etxZ3ordwbBAAs8yxETbpVEsYJVTSwoCQz6i8dlZ0HQmurJh9ezTrWdmkl/WZPLDWwSKJ1eC7aRct"
-                      ],
-                      "x5t": "ceXBgISC99AL6JII5KhC__fuEP4"
-                  }
-              ]
-          }"#)
+            .with_body(
+                serde_json::to_string(&JWKSet {
+                    keys: vec![load_keys("myKeyId1")],
+                })
+                .unwrap(),
+            )
             .create();
 
         let m2 = mock("GET", "/.well-known/jwks.json")
-        .with_status(200)
-        .with_header("content-type", "application/json")
-        .with_body(r#"{
-          "keys": [
-              {
-                  "alg": "RS256",
-                  "e": "AQAB",
-                  "kid": "myKeyId2",
-                  "kty": "RSA",
-                  "n": "uNaM8aXf0OJSmjc1iBvJEKdB9LFNn-UfZI7mZURSDhCFNxNb8jwP7z6d_DsAbEfNbE4yQ3eZ86qT6speuVB2n5wGqXA0-rKEgYTEA_2isE88EwFoo04_284dvRbpSpeWmIn45_vM-RQKZE_tBqkm00k6eGO_llW5knLMiXcQ_AhNfdHiNcszY3rI_Xc-6uJFvwXnxy61AZbRp8gvvWzkNpnbzeCu40EnNMp6FpAIREdyQkrKaMPfS1Mlg_S0QhhUiT7NionT-nzbl5d2hlsO5_33S838NL5_T7Ts6-3viH0WLIJKAyC6KoF5zxONuztIetyZ_JkErflPAQOtm5TcCQ",
-                  "use": "sig",
-                  "x5c": [
-                      "MIIDETCCAfmgAwIBAgIJJtgqNutHq0anMA0GCSqGSIb3DQEBCwUAMCYxJDAiBgNVBAMTG2Rldi1uZXdsYW5kaW5nLmV1LmF1dGgwLmNvbTAeFw0yMTAzMDYxMTIxMThaFw0zNDExMTMxMTIxMThaMCYxJDAiBgNVBAMTG2Rldi1uZXdsYW5kaW5nLmV1LmF1dGgwLmNvbTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBALjWjPGl39DiUpo3NYgbyRCnQfSxTZ/lH2SO5mVEUg4QhTcTW/I8D+8+nfw7AGxHzWxOMkN3mfOqk+rKXrlQdp+cBqlwNPqyhIGExAP9orBPPBMBaKNOP9vOHb0W6UqXlpiJ+Of7zPkUCmRP7QapJtNJOnhjv5ZVuZJyzIl3EPwITX3R4jXLM2N6yP13PuriRb8F58cutQGW0afIL71s5DaZ283gruNBJzTKehaQCERHckJKymjD30tTJYP0tEIYVIk+zYqJ0/p825eXdoZbDuf990vN/DS+f0+07Ovt74h9FiyCSgMguiqBec8Tjbs7SHrcmfyZBK35TwEDrZuU3AkCAwEAAaNCMEAwDwYDVR0TAQH/BAUwAwEB/zAdBgNVHQ4EFgQUduuktYhD46z4ToVvLoqrjrusadEwDgYDVR0PAQH/BAQDAgKEMA0GCSqGSIb3DQEBCwUAA4IBAQAQkI/lwZuKLCzMv5oxPo7KzIgNQOdQrMGjrN/vnVMmdpFnN3cgF4hpTgEbCfnjMUGfGujVqJ69ZEG4/sL7bSJD2YOkvS982KTfFG8TsWwEXRBeInES7FiXkm/bbs4tX5JCAFBHCtfaSCHSK93cg+at/SPDjDFiONFH17UyJmIQi2e3S2tUYTK6/scZzNIy2T5ZcMjBC3VExojQduJaN+Y5YMClTuxIofOSrduyMT7bNwBaHvC3B4f6s/2yUvRd+50BCEixbC1etxZ3ordwbBAAs8yxETbpVEsYJVTSwoCQz6i8dlZ0HQmurJh9ezTrWdmkl/WZPLDWwSKJ1eC7aRct"
-                  ],
-                  "x5t": "ceXBgISC99AL6JII5KhC__fuEP4"
-              }
-          ]
-      }"#)
-        .create();
+            .with_status(200)
+            .with_header("content-type", "application/json")
+            .with_body(
+                serde_json::to_string(&JWKSet {
+                    keys: vec![load_keys("myKeyId2")],
+                })
+                .unwrap(),
+            )
+            .create();
 
         let sut = Keys::new(Domain::new(mockito::server_url()));
 
