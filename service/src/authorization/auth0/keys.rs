@@ -7,7 +7,7 @@ use reqwest::{Client, StatusCode};
 /// Wrapper around the JWK Keys, allowing us to automatically fetch them when needed.
 pub struct Keys {
     /// The Auth0 Domain to get the keys from.
-    domain: Domain,
+    url: String,
     /// The HTTP Client to use to get the keys.
     client: Client,
     /// The cached JWK keys
@@ -19,12 +19,12 @@ impl Keys {
     ///
     /// # Parameters
     /// - `domain` - The Auth0 Domain
-    pub fn new(domain: Domain) -> Self {
+    pub fn new(domain: &Domain) -> Self {
         let client = Client::new();
         let keys = JWKSet { keys: vec![] };
 
         Self {
-            domain,
+            url: domain.build_url("/.well-known/jwks.json"),
             client,
             cache: Mutex::new(RefCell::new(keys)),
         }
@@ -67,11 +67,7 @@ impl Keys {
     /// The keyset retrieved from Auth0.
     #[tracing::instrument(skip(self))]
     async fn fetch(&self) -> Option<JWKSet<()>> {
-        let result = self
-            .client
-            .get(&self.domain.build_url("/.well-known/jwks.json"))
-            .send()
-            .await;
+        let result = self.client.get(&self.url).send().await;
         tracing::debug!(result = ?result, "JWKS result");
 
         let result = match result {
@@ -137,7 +133,7 @@ mod tests {
             )
             .create();
 
-        let sut = Keys::new(Domain::new(mockito::server_url()));
+        let sut = Keys::new(&Domain::new(mockito::server_url()));
         let key = sut.get("myKeyId").await;
 
         let_assert!(Some(key) = key);
@@ -163,7 +159,7 @@ mod tests {
             .with_body(r#"{"keys": []}"#)
             .create();
 
-        let sut = Keys::new(Domain::new(mockito::server_url()));
+        let sut = Keys::new(&Domain::new(mockito::server_url()));
         let key = sut.get("myKeyId").await;
 
         check!(key.is_none());
@@ -181,7 +177,7 @@ mod tests {
             .with_body(r#"Unknown host"#)
             .create();
 
-        let sut = Keys::new(Domain::new(mockito::server_url()));
+        let sut = Keys::new(&Domain::new(mockito::server_url()));
         let key = sut.get("myKeyId").await;
 
         check!(key.is_none());
@@ -204,7 +200,7 @@ mod tests {
             )
             .create();
 
-        let sut = Keys::new(Domain::new(mockito::server_url()));
+        let sut = Keys::new(&Domain::new(mockito::server_url()));
 
         let key = sut.get("myKeyId").await;
         let_assert!(Some(key) = key);
@@ -243,7 +239,7 @@ mod tests {
             )
             .create();
 
-        let sut = Keys::new(Domain::new(mockito::server_url()));
+        let sut = Keys::new(&Domain::new(mockito::server_url()));
 
         let key = sut.get("myKeyId1").await;
         let_assert!(Some(key) = key);
