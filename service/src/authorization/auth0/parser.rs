@@ -1,4 +1,4 @@
-use super::{Domain, Keys};
+use super::{keys::Keys, Domain};
 use crate::authorization::{Principal, SecurityContext};
 use biscuit::{jwk::JWKSet, jws::Compact, ClaimsSet, Validation, ValidationOptions};
 use std::ops::Deref;
@@ -30,6 +30,7 @@ impl AccessTokenParser {
     ///
     /// # Parameters
     /// - `domain` - The Auth0 domain that the tokens are from
+    /// - `audience` - The API audience that the tokens are for
     pub fn new<A>(domain: Domain, audience: A) -> Self
     where
         A: Into<String>,

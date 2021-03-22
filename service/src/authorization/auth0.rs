@@ -3,4 +3,4 @@ mod keys;
 mod parser;
 
 pub use domain::Domain;
-pub use keys::Keys;
+pub use parser::AccessTokenParser;
