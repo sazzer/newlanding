@@ -7,10 +7,10 @@ use std::{pin::Pin, sync::Arc};
 
 impl FromRequest for Authorization {
     type Error = Problem;
-    // type Future = Ready<Result<Self, Self::Error>>;
     type Future = Pin<Box<dyn Future<Output = Result<Self, Self::Error>>>>;
     type Config = ();
 
+    #[tracing::instrument]
     fn from_request(req: &HttpRequest, _: &mut Payload) -> Self::Future {
         let access_token_parser: &Data<Arc<AccessTokenParser>> = req.app_data().unwrap();
         let access_token_parser = access_token_parser.get_ref().clone();

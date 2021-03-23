@@ -51,21 +51,30 @@ impl AccessTokenParser {
     ///
     /// # Returns
     /// The parsed token, or an error indicating why it couldn't be parsed.
-    pub async fn parse_token<T>(&self, token: T) -> Result<SecurityContext, ParseError>
-    where
-        T: Into<String>,
-    {
-        let encoded = Compact::<ClaimsSet<()>, ()>::new_encoded(&token.into());
-        let header = encoded
-            .unverified_header()
-            .map_err(|_| ParseError::MalformedToken)?;
-        let kid = header.registered.key_id.ok_or(ParseError::UnknownKey)?;
+    #[tracing::instrument(skip(self))]
+    pub async fn parse_token(&self, token: &str) -> Result<SecurityContext, ParseError> {
+        let encoded = Compact::<ClaimsSet<()>, ()>::new_encoded(token);
+        let header = encoded.unverified_header().map_err(|e| {
+            tracing::warn!(e = ?e, token = ?token, "Failed to extract header from token");
+            ParseError::MalformedToken
+        })?;
 
-        let key = self.keys.get(&kid).await.ok_or(ParseError::UnknownKey)?;
+        let kid = header.registered.key_id.ok_or_else(|| {
+            tracing::warn!(token = ?token, "Token had no Key ID");
+            ParseError::UnknownKey
+        })?;
+
+        let key = self.keys.get(&kid).await.ok_or_else(|| {
+            tracing::warn!(token = ?token, kid = ?kid, "Token had an unknown Key ID");
+            ParseError::UnknownKey
+        })?;
 
         let decoded = encoded
             .decode_with_jwks(&JWKSet { keys: vec![key] }, None)
-            .map_err(|_| ParseError::MalformedToken)?;
+            .map_err(|e| {
+                tracing::warn!(e = ?e, token = ?token, kid = ?kid, "Failed to decode token");
+                ParseError::MalformedToken
+            })?;
 
         decoded
             .validate(ValidationOptions {
@@ -194,7 +203,7 @@ mod tests {
             Some(now + Duration::days(5)),
         );
 
-        let parsed = sut.parse_token(token).await;
+        let parsed = sut.parse_token(&token).await;
 
         let_assert!(Ok(security_context) = parsed);
         check!(security_context.principal == Principal::User("userId".to_owned()));
@@ -250,7 +259,7 @@ mod tests {
             Some(now + Duration::days(5)),
         );
 
-        let parsed = sut.parse_token(token).await;
+        let parsed = sut.parse_token(&token).await;
 
         let_assert!(Err(err) = parsed);
         check!(err == ParseError::UnknownKey);
@@ -278,7 +287,7 @@ mod tests {
             Some(now + Duration::days(5)),
         );
 
-        let parsed = sut.parse_token(token).await;
+        let parsed = sut.parse_token(&token).await;
 
         let_assert!(Err(err) = parsed);
         check!(err == ParseError::UnknownKey);
@@ -311,7 +320,7 @@ mod tests {
 
         let token = build_token(Some("myKeyId"), iss, sub, aud, iat, exp);
 
-        let parsed = sut.parse_token(token).await;
+        let parsed = sut.parse_token(&token).await;
 
         let_assert!(Err(err) = parsed);
 
