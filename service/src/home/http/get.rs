@@ -25,7 +25,7 @@ pub async fn handle(
         version: env!("CARGO_PKG_VERSION"),
     });
 
-    let links = home_links.generate_links().await;
+    let links = home_links.generate_links(&authorization).await;
     for (name, link) in links {
         hal_document = hal_document.with_link(name, link);
     }
