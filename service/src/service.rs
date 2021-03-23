@@ -23,7 +23,7 @@ impl Service {
 
         let prometheus = Registry::new();
 
-        let _authentication =
+        let authentication =
             crate::authorization::component::new(&cfg.auth0_domain, &cfg.auth0_audience);
         let users = crate::users::component::new(
             &cfg.auth0_domain,
@@ -35,6 +35,7 @@ impl Service {
         let server = crate::server::component::new()
             .with_routes(home)
             .with_routes(users)
+            .with_routes(authentication)
             .build(cfg.port, prometheus);
 
         tracing::debug!("Built New Landing");

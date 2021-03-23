@@ -1,5 +1,5 @@
-use crate::home::HomeLinksUseCase;
 use crate::http::{hal::HalDocument, Response, SimpleRespondable};
+use crate::{authorization::Authorization, home::HomeLinksUseCase};
 use actix_http::http::{
     header::{CacheControl, CacheDirective},
     StatusCode,
@@ -18,6 +18,7 @@ pub struct HomeDocument {
 /// Generate the home document
 pub async fn handle(
     home_links: Data<Arc<HomeLinksUseCase>>,
+    authorization: Authorization,
 ) -> Response<SimpleRespondable<HalDocument>> {
     let mut hal_document = HalDocument::new(HomeDocument {
         name: env!("CARGO_PKG_NAME"),

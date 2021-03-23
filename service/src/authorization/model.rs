@@ -17,3 +17,10 @@ pub struct SecurityContext {
     /// When the security context expires.
     pub expires: DateTime<Utc>,
 }
+
+/// Details of whether the request is authorized or not.
+#[derive(Debug)]
+pub enum Authorization {
+    Unauthorized,
+    Authorized(SecurityContext),
+}

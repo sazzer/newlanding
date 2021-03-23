@@ -45,3 +45,10 @@ pub const NOT_FOUND: SimpleProblemType = SimpleProblemType {
     problem_title: "The requested resource was not found",
     status_code: StatusCode::NOT_FOUND,
 };
+
+/// Problem to indicate that a request was unauthorized.
+pub const UNAUTHORIZED: SimpleProblemType = SimpleProblemType {
+    problem_type: "about:blank",
+    problem_title: "Unauthorized",
+    status_code: StatusCode::UNAUTHORIZED,
+};
