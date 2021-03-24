@@ -1,0 +1,14 @@
+tasks:
+  start:
+    command: go run ./cmd/newlanding/...
+
+  lint:
+    command: golangci-lint run --allow-parallel-runners
+
+  unittest:
+    command: go test -v ./internal/...
+
+pipelines:
+  test:
+    - task: lint
+    - task: unittest
