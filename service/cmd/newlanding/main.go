@@ -8,6 +8,7 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/rs/zerolog/pkgerrors"
+	"github.com/sazzer/newlanding/service/internal/service"
 )
 
 func main() {
@@ -20,4 +21,12 @@ func main() {
 	config := loadConfig()
 
 	log.Info().Interface("config", config).Msg("Config")
+
+	service := service.New(service.Config{
+		HTTP: service.HTTPConfig{
+			Port: config.Port,
+		},
+	})
+
+	service.Start()
 }

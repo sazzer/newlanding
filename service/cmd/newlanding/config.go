@@ -5,7 +5,9 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-type config struct{}
+type config struct {
+	Port uint16 `default:"8000"`
+}
 
 func loadConfig() config {
 	var c config
