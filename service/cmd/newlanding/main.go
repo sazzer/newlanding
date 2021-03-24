@@ -4,6 +4,7 @@ import (
 	"os"
 	"time"
 
+	_ "github.com/joho/godotenv/autoload"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/rs/zerolog/pkgerrors"
@@ -16,5 +17,7 @@ func main() {
 
 	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stdout, TimeFormat: time.RFC3339}).With().Caller().Logger()
 
-	log.Info().Msg("Hello")
+	config := loadConfig()
+
+	log.Info().Interface("config", config).Msg("Config")
 }
