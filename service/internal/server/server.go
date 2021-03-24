@@ -16,8 +16,14 @@ type Server struct {
 	server *chi.Mux
 }
 
+// Means to contribute routes to the HTTP Server.
+type RouteContributor interface {
+	// Contribute routes to the HTTP Server.
+	ContributeRoutes(router Router)
+}
+
 // C0nstruct a new HTTP Server.
-func New(port uint16) Server {
+func New(port uint16, routes []RouteContributor) Server {
 	log.Debug().Uint16("port", port).Msg("Building HTTP Server")
 
 	r := chi.NewRouter()
@@ -32,6 +38,12 @@ func New(port uint16) Server {
 	r.Use(cors.Handler(cors.Options{
 		AllowCredentials: true,
 	}))
+
+	router := Router{mux: r}
+
+	for _, route := range routes {
+		route.ContributeRoutes(router)
+	}
 
 	return Server{
 		port:   port,
