@@ -3,6 +3,7 @@ module github.com/sazzer/newlanding/service
 go 1.16
 
 require (
+	github.com/bradleyjkemp/cupaloy v2.3.0+incompatible
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/go-chi/chi/v5 v5.0.1
 	github.com/go-chi/cors v1.1.1

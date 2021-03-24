@@ -1,0 +1,8 @@
+(bytes.Buffer) HTTP/1.1 404 Not Found
+Connection: close
+Content-Type: application/problem+json
+
+{
+  "status": 404
+}
+

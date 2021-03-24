@@ -1,13 +1,12 @@
 package response_test
 
 import (
-	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
+	"github.com/sazzer/newlanding/service/internal/asserthttp"
 	"github.com/sazzer/newlanding/service/internal/response"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestEmptyResponse(t *testing.T) {
@@ -23,12 +22,7 @@ func TestEmptyResponse(t *testing.T) {
 	result := rec.Result()
 	defer result.Body.Close()
 
-	assert.Equal(t, http.StatusOK, result.StatusCode)
-	assert.Equal(t, "application/json", result.Header.Get("content-type"))
-
-	body, err := ioutil.ReadAll(result.Body)
-	assert.NoError(t, err)
-	assert.Equal(t, []byte("{}\n"), body)
+	asserthttp.AssertResponse(t, result)
 }
 
 type statusCodePayload struct{}
@@ -50,12 +44,7 @@ func TestStatusCodeResponse(t *testing.T) {
 	result := rec.Result()
 	defer result.Body.Close()
 
-	assert.Equal(t, http.StatusBadGateway, result.StatusCode)
-	assert.Equal(t, "application/json", result.Header.Get("content-type"))
-
-	body, err := ioutil.ReadAll(result.Body)
-	assert.NoError(t, err)
-	assert.Equal(t, []byte("{}\n"), body)
+	asserthttp.AssertResponse(t, result)
 }
 
 type contentTypePayload struct{}
@@ -77,10 +66,5 @@ func TestContentTypePayload(t *testing.T) {
 	result := rec.Result()
 	defer result.Body.Close()
 
-	assert.Equal(t, http.StatusOK, result.StatusCode)
-	assert.Equal(t, "text/plain", result.Header.Get("content-type"))
-
-	body, err := ioutil.ReadAll(result.Body)
-	assert.NoError(t, err)
-	assert.Equal(t, []byte("{}\n"), body)
+	asserthttp.AssertResponse(t, result)
 }
