@@ -1,4 +1,4 @@
-(bytes.Buffer) HTTP/1.1 502 Bad Gateway
+HTTP/1.1 502 Bad Gateway
 Connection: close
 Content-Type: application/json
 

@@ -2,9 +2,11 @@ package asserthttp
 
 import (
 	"bytes"
+	"io/ioutil"
 	"net/http"
 	"testing"
 
+	"github.com/andybalholm/crlf"
 	"github.com/bradleyjkemp/cupaloy"
 	"github.com/stretchr/testify/assert"
 )
@@ -17,5 +19,8 @@ func AssertResponse(t *testing.T, response *http.Response) {
 	err := response.Write(&buf)
 	assert.NoError(t, err)
 
-	cupaloy.SnapshotT(t, buf)
+	bytes, err := ioutil.ReadAll(crlf.NewReader(&buf))
+	assert.NoError(t, err)
+
+	cupaloy.SnapshotT(t, bytes)
 }
