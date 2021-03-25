@@ -9,8 +9,8 @@ type serverComponentBuilder struct {
 }
 
 // Create a new server component.
-func newServer(port uint16) serverComponentBuilder {
-	return serverComponentBuilder{
+func newServer(port uint16) *serverComponentBuilder {
+	return &serverComponentBuilder{
 		port:   port,
 		routes: nil,
 	}

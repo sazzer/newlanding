@@ -14,7 +14,11 @@ type Service struct {
 func New(config Config) Service {
 	log.Info().Msg("Building New Landing")
 
-	server := newServer(config.HTTP.Port).build()
+	home := newHome()
+
+	server := newServer(config.HTTP.Port).
+		withRoutes(home.routes).
+		build()
 
 	log.Info().Msg("Built New Landing")
 
