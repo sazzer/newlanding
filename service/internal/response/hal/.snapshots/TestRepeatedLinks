@@ -1,0 +1,18 @@
+HTTP/1.1 200 OK
+Connection: close
+Content-Type: application/hal+json
+
+{
+  "_links": {
+    "item": [
+      {
+        "href": "/abc"
+      },
+      {
+        "href": "/def",
+        "name": "Other"
+      }
+    ]
+  }
+}
+
