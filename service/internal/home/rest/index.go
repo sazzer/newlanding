@@ -7,5 +7,8 @@ import (
 )
 
 func (r routes) index(req server.RequestContext) response.Response {
-	return response.New(hal.Hal{})
+	h := hal.Hal{}
+	h.WithLink("self", hal.Link{Href: "/"})
+
+	return response.New(h)
 }

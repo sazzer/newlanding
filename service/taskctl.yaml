@@ -8,7 +8,11 @@ tasks:
   unittest:
     command: go test -v ./internal/...
 
+  integrationtest:
+    command: go test -v ./tests/...
+
 pipelines:
   test:
     - task: lint
     - task: unittest
+    - task: integrationtest

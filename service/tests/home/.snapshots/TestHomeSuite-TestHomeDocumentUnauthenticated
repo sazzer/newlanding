@@ -1,0 +1,13 @@
+HTTP/1.1 200 OK
+Connection: close
+Content-Type: application/hal+json
+Vary: Origin
+
+{
+  "_links": {
+    "self": {
+      "href": "/"
+    }
+  }
+}
+

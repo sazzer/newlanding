@@ -19,6 +19,7 @@ func newServer(port uint16) *serverComponentBuilder {
 // Register a new set of routes with the server.
 func (s *serverComponentBuilder) withRoutes(r server.RouteContributor) *serverComponentBuilder {
 	s.routes = append(s.routes, r)
+
 	return s
 }
 
